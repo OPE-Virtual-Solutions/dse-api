@@ -8,16 +8,6 @@
 from django.db import models
 
 
-class GerenciamentoIngrediente(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    nome = models.CharField(max_length=40)
-    quantidade = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'Gerenciamento_ingrediente'
-
-
 class TbBairro(models.Model):
     nome = models.CharField(max_length=50)
     cidade = models.CharField(max_length=50)
