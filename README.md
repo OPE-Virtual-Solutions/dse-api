@@ -25,7 +25,7 @@
     | Windows    | cmd.exe         | C:\> venv\Scripts\activate.bat       |
     |            | PowerShell      | PS C:\> venv\Scripts\Activate.ps1    |
 
-3. Crie um arquivo chamado `.env` e coloque dentro dele a seguinte configuração:
+3. Crie um arquivo chamado `.env` no diretório raíz do projeto e coloque dentro dele a seguinte configuração:
     ```
     DATABASE_NAME=NOME_DO_BANCO_DE_DADOS
     DATABASE_USER=NOME_DO_USUARIO_PARA_LOGIN
