@@ -6,7 +6,7 @@
     ```bash
     git clone https://github.com/OPE-Virtual-Solutions/dse-api.git
     ```
-2. (opcional) Abra o diretório do projeto e crie uma máquina virtual Python
+2. Abra o diretório do projeto e crie uma máquina virtual Python
     ```bash
     # no Windows
     python -m venv venv
@@ -34,13 +34,27 @@
     DATABASE_PORT=1433
     ```
 
-    Guia de parâmetros:
+    **OBS.:** Os valores após o `=` deverão ser trocados de acordo com a configuração do seu banco de dados, sendo:
     - `DATABASE_NAME` - Nome do banco de dados que será utilizado na API;
     - `DATABASE_USER` - Nome do usuário para logon no SQL Management Studio;
     - `DATABASE_PASSWORD` - Senha do usuário.
 
-4. Rode a aplicação:
-```bash
-# com máquina virtual 
-python manage.py runserver
-```
+4. Instale as dependências necessárias para a execução do projeto:
+    ```bash
+    # aponte o terminal para dentro da primeira pasta "LeandroLanches" e execute
+    pip install -r requirements.txt
+    ```
+
+5. Sincronize o `django` com o banco de dados conectado:
+    ```bash
+    # cria as migrations do próprio django 
+    python manage.py makemigrations
+
+    # adiciona as migrations ao banco de dados
+    python manage.py migrate
+    ```
+
+6. Rode a aplicação:
+    ```bash
+    python manage.py runserver
+    ```
