@@ -15,7 +15,6 @@ class TbBairro(models.Model):
     taxa = models.FloatField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'TB_BAIRRO'
 
     def __str__(self):
@@ -28,7 +27,6 @@ class TbCliente(models.Model):
     telefone = models.CharField(max_length=11, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'TB_CLIENTE'
         unique_together = (('id', 'id'),)
 
@@ -44,7 +42,6 @@ class TbEndereco(models.Model):
     cliente = models.ForeignKey(TbCliente, models.DO_NOTHING, db_column='cliente')
 
     class Meta:
-        managed = False
         db_table = 'TB_ENDERECO'
 
     def __str__(self):
@@ -56,7 +53,6 @@ class TbFuncionario(models.Model):
     cargo = models.CharField(max_length=255)
 
     class Meta:
-        managed = False
         db_table = 'TB_FUNCIONARIO'
 
     def __str__(self):
@@ -68,7 +64,6 @@ class TbIngrediente(models.Model):
     quantidade = models.IntegerField()
 
     class Meta:
-        managed = False
         db_table = 'TB_INGREDIENTE'
 
     def __str__(self): 
@@ -83,7 +78,6 @@ class TbProduto(models.Model):
     categoria = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'TB_PRODUTO'
 
     def __str__(self): 
@@ -94,9 +88,8 @@ class TbIngredienteProduto(models.Model):
     ingrediente = models.ForeignKey(TbIngrediente, models.DO_NOTHING, db_column='ingrediente')
 
     class Meta:
-        managed = False
         db_table = 'TB_INGREDIENTE_PRODUTO'
-        unique_together = (('produto', 'ingrediente', 'ingrediente'),)
+        unique_together = (('produto', 'ingrediente'),)
     
     def __str__(self): 
         return f"{self.produto} {self.ingrediente}"
@@ -110,7 +103,6 @@ class TbItemPedido(models.Model):
     preco = models.FloatField()
 
     class Meta:
-        managed = False
         db_table = 'TB_ITEM_PEDIDO'
     
     def __str__(self): 
@@ -130,7 +122,6 @@ class TbPedido(models.Model):
     funcionario = models.ForeignKey(TbFuncionario, models.DO_NOTHING, db_column='funcionario', blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'TB_PEDIDO'
 
 
@@ -143,7 +134,6 @@ class TbUsuario(models.Model):
     tipo = models.CharField(max_length=255)
 
     class Meta:
-        managed = False
         db_table = 'TB_USUARIO'
 
     def __str__(self): 
