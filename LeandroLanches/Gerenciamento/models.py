@@ -18,6 +18,9 @@ class TbBairro(models.Model):
         managed = False
         db_table = 'TB_BAIRRO'
 
+    def __str__(self):
+        return f"{self.uf} - {self.nome}"
+
 
 class TbCliente(models.Model):
     id = models.OneToOneField('TbUsuario', models.DO_NOTHING, db_column='id', primary_key=True)
@@ -28,6 +31,9 @@ class TbCliente(models.Model):
         managed = False
         db_table = 'TB_CLIENTE'
         unique_together = (('id', 'id'),)
+
+    def __str__(self):
+        return f"{self.nome}"
 
 
 class TbEndereco(models.Model):
@@ -41,6 +47,9 @@ class TbEndereco(models.Model):
         managed = False
         db_table = 'TB_ENDERECO'
 
+    def __str__(self):
+        return f"{self.cep} - {self.logradouro}"
+
 
 class TbFuncionario(models.Model):
     id = models.OneToOneField('TbUsuario', models.DO_NOTHING, db_column='id', primary_key=True)
@@ -49,6 +58,9 @@ class TbFuncionario(models.Model):
     class Meta:
         managed = False
         db_table = 'TB_FUNCIONARIO'
+
+    def __str__(self):
+        return f"{self.id}"
 
 
 class TbIngrediente(models.Model):
@@ -59,6 +71,9 @@ class TbIngrediente(models.Model):
         managed = False
         db_table = 'TB_INGREDIENTE'
 
+    def __str__(self): 
+        return f"{self.nome}"
+
 
 class TbIngredienteProduto(models.Model):
     produto = models.OneToOneField('TbProduto', models.DO_NOTHING, db_column='produto', primary_key=True)
@@ -68,6 +83,9 @@ class TbIngredienteProduto(models.Model):
         managed = False
         db_table = 'TB_INGREDIENTE_PRODUTO'
         unique_together = (('produto', 'ingrediente', 'ingrediente'),)
+    
+    def __str__(self): 
+        return f"{self.produto} {self.ingrediente}"
 
 
 class TbItemPedido(models.Model):
@@ -80,6 +98,9 @@ class TbItemPedido(models.Model):
     class Meta:
         managed = False
         db_table = 'TB_ITEM_PEDIDO'
+    
+    def __str__(self): 
+        return f"{self.pedido} {self.produto}"
 
 
 class TbPedido(models.Model):
@@ -110,6 +131,9 @@ class TbProduto(models.Model):
         managed = False
         db_table = 'TB_PRODUTO'
 
+    def __str__(self): 
+        return f"{self.nome}"
+
 
 class TbUsuario(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -121,6 +145,9 @@ class TbUsuario(models.Model):
     class Meta:
         managed = False
         db_table = 'TB_USUARIO'
+
+    def __str__(self): 
+        return f"{self.nome}"
 
 
 class AuthGroup(models.Model):
