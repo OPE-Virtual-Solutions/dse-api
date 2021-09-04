@@ -75,8 +75,22 @@ class TbIngrediente(models.Model):
         return f"{self.nome}"
 
 
+class TbProduto(models.Model):
+    nome = models.CharField(max_length=100)
+    preco = models.FloatField()
+    descricao = models.CharField(max_length=400, blank=True, null=True)
+    ativo = models.BooleanField()
+    categoria = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'TB_PRODUTO'
+
+    def __str__(self): 
+        return f"{self.nome}"
+
 class TbIngredienteProduto(models.Model):
-    produto = models.OneToOneField('TbProduto', models.DO_NOTHING, db_column='produto', primary_key=True)
+    produto = models.ForeignKey(TbProduto, models.DO_NOTHING, db_column='produto')
     ingrediente = models.ForeignKey(TbIngrediente, models.DO_NOTHING, db_column='ingrediente')
 
     class Meta:
@@ -119,20 +133,6 @@ class TbPedido(models.Model):
         managed = False
         db_table = 'TB_PEDIDO'
 
-
-class TbProduto(models.Model):
-    nome = models.CharField(max_length=100)
-    preco = models.FloatField()
-    descricao = models.CharField(max_length=400, blank=True, null=True)
-    ativo = models.BooleanField()
-    categoria = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'TB_PRODUTO'
-
-    def __str__(self): 
-        return f"{self.nome}"
 
 
 class TbUsuario(models.Model):
