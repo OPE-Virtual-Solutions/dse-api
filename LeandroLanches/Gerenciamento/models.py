@@ -15,10 +15,17 @@ class TbBairro(models.Model):
     taxa = models.FloatField(blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'TB_BAIRRO'
 
-    def __str__(self):
-        return f"{self.uf} - {self.nome}"
+
+class TbCategoria(models.Model):
+    nome = models.CharField(max_length=50)
+    ativo = models.BooleanField()
+
+    class Meta:
+        managed = False
+        db_table = 'TB_CATEGORIA'
 
 
 class TbCliente(models.Model):
@@ -27,11 +34,9 @@ class TbCliente(models.Model):
     telefone = models.CharField(max_length=11, blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'TB_CLIENTE'
         unique_together = (('id', 'id'),)
-
-    def __str__(self):
-        return f"{self.nome}"
 
 
 class TbEndereco(models.Model):
@@ -42,10 +47,8 @@ class TbEndereco(models.Model):
     cliente = models.ForeignKey(TbCliente, models.DO_NOTHING, db_column='cliente')
 
     class Meta:
+        managed = False
         db_table = 'TB_ENDERECO'
-
-    def __str__(self):
-        return f"{self.cep} - {self.logradouro}"
 
 
 class TbFuncionario(models.Model):
@@ -53,10 +56,9 @@ class TbFuncionario(models.Model):
     cargo = models.CharField(max_length=255)
 
     class Meta:
+        managed = False
         db_table = 'TB_FUNCIONARIO'
-
-    def __str__(self):
-        return f"{self.id}"
+        unique_together = (('id', 'id'),)
 
 
 class TbIngrediente(models.Model):
@@ -64,35 +66,17 @@ class TbIngrediente(models.Model):
     quantidade = models.IntegerField()
 
     class Meta:
+        managed = False
         db_table = 'TB_INGREDIENTE'
 
-    def __str__(self): 
-        return f"{self.nome}"
-
-
-class TbProduto(models.Model):
-    nome = models.CharField(max_length=100)
-    preco = models.FloatField()
-    descricao = models.CharField(max_length=400, blank=True, null=True)
-    ativo = models.BooleanField()
-    categoria = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'TB_PRODUTO'
-
-    def __str__(self): 
-        return f"{self.nome}"
 
 class TbIngredienteProduto(models.Model):
-    produto = models.ForeignKey(TbProduto, models.DO_NOTHING, db_column='produto')
+    produto = models.ForeignKey('TbProduto', models.DO_NOTHING, db_column='produto')
     ingrediente = models.ForeignKey(TbIngrediente, models.DO_NOTHING, db_column='ingrediente')
 
     class Meta:
+        managed = False
         db_table = 'TB_INGREDIENTE_PRODUTO'
-        unique_together = (('produto', 'ingrediente'),)
-    
-    def __str__(self): 
-        return f"{self.produto} {self.ingrediente}"
 
 
 class TbItemPedido(models.Model):
@@ -103,10 +87,8 @@ class TbItemPedido(models.Model):
     preco = models.FloatField()
 
     class Meta:
+        managed = False
         db_table = 'TB_ITEM_PEDIDO'
-    
-    def __str__(self): 
-        return f"{self.pedido} {self.produto}"
 
 
 class TbPedido(models.Model):
@@ -122,8 +104,20 @@ class TbPedido(models.Model):
     funcionario = models.ForeignKey(TbFuncionario, models.DO_NOTHING, db_column='funcionario', blank=True, null=True)
 
     class Meta:
+        managed = False
         db_table = 'TB_PEDIDO'
 
+
+class TbProduto(models.Model):
+    nome = models.CharField(max_length=100)
+    preco = models.FloatField()
+    descricao = models.CharField(max_length=400, blank=True, null=True)
+    ativo = models.BooleanField()
+    categoria = models.ForeignKey(TbCategoria, models.DO_NOTHING, db_column='categoria', blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'TB_PRODUTO'
 
 
 class TbUsuario(models.Model):
@@ -134,10 +128,8 @@ class TbUsuario(models.Model):
     tipo = models.CharField(max_length=255)
 
     class Meta:
+        managed = False
         db_table = 'TB_USUARIO'
-
-    def __str__(self): 
-        return f"{self.nome}"
 
 
 class AuthGroup(models.Model):

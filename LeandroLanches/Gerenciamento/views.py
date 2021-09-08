@@ -23,6 +23,23 @@ class TbBairroAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
+class TbCategoriaAPIView(APIView):
+    """
+    EndPoint de categorias
+    """
+
+    def get(self, request):
+        bairros = TbCategoria.objects.all()
+        serializer = TbCategoriaSerializer(bairros, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = TbCategoriaSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
 class TbClienteAPIView(APIView):
     """
     EndPoint de clientes
@@ -148,12 +165,12 @@ class TbProdutoAPIView(APIView):
     """
 
     def get(self, request):
-        bairros = TbBairro.objects.all()
-        serializer = TbBairroSerializer(bairros, many=True)
+        produtos = TbProduto.objects.all()
+        serializer = TbProdutoSerializer(produtos, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = TbBairroSerializer(data=request.data)
+        serializer = TbProdutoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
