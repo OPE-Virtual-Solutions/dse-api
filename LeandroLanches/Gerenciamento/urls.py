@@ -1,6 +1,23 @@
 from django.urls import path
-
 from .views import *
+
+from rest_framework import routers
+from rest_framework.routers import SimpleRouter
+
+
+router = SimpleRouter()
+router.register('bairros', TbBairroViewSet)
+router.register('categorias', TbCategoriaViewSet)
+router.register('clientes', TbClienteViewSet)
+router.register('enderecos', TbEnderecoViewSet)
+router.register('funcionarios', TbFuncionarioViewSet)
+router.register('ingredientes', TbIngredienteViewSet)
+router.register('produtos', TbProdutoViewSet)
+router.register('ingredientesProdutos', TbIngredienteProdutoViewSet)
+router.register('itensPedidos', TbItemPedidoViewSet)
+router.register('pedidos', TbPedidoViewSet)
+router.register('usuarios', TbUsuarioViewSet)
+
 
 urlpatterns = [
     path('bairros/', TbBairroAPIView.as_view(), name='bairros'),

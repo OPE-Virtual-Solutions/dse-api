@@ -1,3 +1,13 @@
+from django.views import generic
+from rest_framework import generics
+from rest_framework.generics import get_object_or_404
+
+from rest_framework import viewsets
+from rest_framework.decorators import action
+
+from rest_framework import mixins
+from rest_framework.serializers import Serializer
+
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -5,7 +15,9 @@ from rest_framework import serializers, status # Status dos métodos HTTP
 from .models import *
 from .serializers import *
 
-
+"""
+API V1
+"""
 class TbBairroAPIView(APIView):
     """
     EndPoint de bairros
@@ -191,3 +203,63 @@ class TbUsuarioAPIView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+"""
+API V2
+"""
+
+
+class TbBairroViewSet(viewsets.ModelViewSet):
+    queryset = TbBairro.objects.all()
+    serializer_class = TbBairroSerializer
+
+
+class TbCategoriaViewSet(viewsets.ModelViewSet):
+    queryset = TbCategoria.objects.all()
+    serializer_class = TbCategoriaSerializer
+
+
+class TbClienteViewSet(viewsets.ModelViewSet):
+    queryset = TbCliente.objects.all()
+    serializer_class = TbClienteSerializer
+
+
+class TbEnderecoViewSet(viewsets.ModelViewSet):
+    queryset = TbEndereco.objects.all()
+    serializer_class = TbEnderecoSerializer
+
+
+class TbFuncionarioViewSet(viewsets.ModelViewSet):
+    queryset = TbFuncionario.objects.all()
+    serializer_class = TbFuncionarioSerializer
+
+
+class TbIngredienteViewSet(viewsets.ModelViewSet):
+    queryset = TbIngrediente.objects.all()
+    serializer_class = TbIngredienteSerializer
+
+
+class TbProdutoViewSet(viewsets.ModelViewSet):
+    queryset = TbProduto.objects.all()
+    serializer_class = TbProdutoSerializer
+
+
+class TbIngredienteProdutoViewSet(viewsets.ModelViewSet):
+    queryset = TbIngredienteProduto.objects.all()
+    serializer_class = TbIngredienteProdutoSerializer
+
+
+class TbItemPedidoViewSet(viewsets.ModelViewSet):
+    queryset = TbItemPedido.objects.all()
+    serializer_class = TbItemPedidoSerializer
+
+
+class TbPedidoViewSet(viewsets.ModelViewSet):
+    queryset = TbPedido.objects.all()
+    serializer_class = TbPedidoSerializer
+
+
+class TbUsuarioViewSet(viewsets.ModelViewSet):
+    queryset = TbUsuario.objects.all()
+    serializer_class = TbUsuarioSerializer
