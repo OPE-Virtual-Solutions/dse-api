@@ -165,7 +165,7 @@ class TbProdutoAPIView(APIView):
     """
 
     def get(self, request):
-        produtos = TbProduto.objects.all()
+        produtos = TbProduto.objects.prefetch_related("ingredientes")
         serializer = TbProdutoSerializer(produtos, many=True)
         return Response(serializer.data)
 

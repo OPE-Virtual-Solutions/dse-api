@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'rest_framework',
     # Minhas aplicações
     'Gerenciamento',
+    "corsheaders"
 ]
 
 MIDDLEWARE = [
@@ -46,9 +47,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware'
 ]
 
 ROOT_URLCONF = 'LeandroLanches.urls'
+
+CORS_ORIGIN_ALLOW_ALL = True   
 
 TEMPLATES = [
     {

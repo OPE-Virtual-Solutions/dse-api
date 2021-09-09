@@ -55,9 +55,20 @@ class TbIngrediente(models.Model):
         db_table = 'TB_INGREDIENTE'
 
 
+class TbProduto(models.Model):
+    nome = models.CharField(max_length=100)
+    preco = models.FloatField()
+    descricao = models.CharField(max_length=400, blank=True, null=True)
+    ativo = models.BooleanField()
+    categoria = models.ForeignKey(TbCategoria, models.DO_NOTHING, db_column='categoria', blank=True, null=True)
+
+    class Meta:
+        db_table = 'TB_PRODUTO'
+
+
 class TbIngredienteProduto(models.Model):
-    produto = models.ForeignKey('TbProduto', models.DO_NOTHING, db_column='produto')
-    ingrediente = models.ForeignKey(TbIngrediente, models.DO_NOTHING, db_column='ingrediente')
+    produto = models.ForeignKey(TbProduto, models.DO_NOTHING, db_column='produto', related_name="ingredientes")
+    ingrediente = models.ForeignKey(TbIngrediente, models.DO_NOTHING, db_column='ingrediente', related_name="produtos")
 
     class Meta:
         db_table = 'TB_INGREDIENTE_PRODUTO'
@@ -87,17 +98,6 @@ class TbPedido(models.Model):
 
     class Meta:
         db_table = 'TB_PEDIDO'
-
-
-class TbProduto(models.Model):
-    nome = models.CharField(max_length=100)
-    preco = models.FloatField()
-    descricao = models.CharField(max_length=400, blank=True, null=True)
-    ativo = models.BooleanField()
-    categoria = models.ForeignKey(TbCategoria, models.DO_NOTHING, db_column='categoria', blank=True, null=True)
-
-    class Meta:
-        db_table = 'TB_PRODUTO'
 
 
 class TbUsuario(models.Model):
