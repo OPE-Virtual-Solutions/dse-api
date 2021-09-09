@@ -15,6 +15,17 @@ class TbBairroSerializer(serializers.ModelSerializer):
         )
 
 
+class TbCategoriaSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TbCategoria
+        fields = (
+            'id',
+            'nome',
+            'ativo',
+        )
+
+
 class TbClienteSerializer(serializers.ModelSerializer):
 
     class Meta:

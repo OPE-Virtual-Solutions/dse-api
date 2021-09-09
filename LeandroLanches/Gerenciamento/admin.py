@@ -45,3 +45,8 @@ class TbProdutoAdmin(admin.ModelAdmin):
 @admin.register(TbUsuario)
 class TbUsuarioAdmin(admin.ModelAdmin):
     list_display = ('nome','email', 'senha', 'tipo')
+
+
+@admin.register(TbCategoria)
+class TbCategoriaAdmin(admin.ModelAdmin):
+    list_display = ('nome','ativo')   
