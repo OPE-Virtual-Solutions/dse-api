@@ -65,6 +65,7 @@ class TbIngredienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = TbIngrediente
         fields = (
+            "id",
             'nome',
             'quantidade'
         )
@@ -111,16 +112,38 @@ class TbPedidoSerializer(serializers.ModelSerializer):
         )
 
 
+class TbIngredienteProdutoRelatedSerializer(serializers.ModelSerializer):
+    ingrediente = TbIngredienteSerializer(many = False)
+
+    class Meta:
+        model = TbIngredienteProduto
+        fields = (
+            "ingrediente",
+        )
+    
+    def to_representation(self, instance):
+        return {
+            "id": instance.ingrediente.id,
+            "nome": instance.ingrediente.nome,
+            "quantidade": instance.ingrediente.quantidade
+        }
+
+
+
 class TbProdutoSerializer(serializers.ModelSerializer):
+    categoria = TbCategoriaSerializer()
+    ingredientes = TbIngredienteProdutoRelatedSerializer(many = True)
 
     class Meta:
         model = TbProduto
         fields = (
+            'id',
             'nome',
             'preco',
             'descricao',
             'ativo',
             'categoria',
+            "ingredientes"
         )
 
 
