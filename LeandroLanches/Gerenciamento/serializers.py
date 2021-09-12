@@ -161,7 +161,6 @@ class TbCreateProdutoSerializer(serializers.ModelSerializer):
 
 
 class TbUsuarioSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = TbUsuario
         fields = (

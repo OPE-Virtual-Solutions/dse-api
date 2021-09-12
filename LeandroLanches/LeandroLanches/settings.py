@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'rest_framework',
     # Minhas aplicações
     'Gerenciamento',
-    "corsheaders"
+    #'corsheaders'
 ]
 
 MIDDLEWARE = [

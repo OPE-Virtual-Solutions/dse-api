@@ -102,6 +102,7 @@ class TbPedido(models.Model):
 
 
 class TbUsuario(models.Model):
+    id = models.IntegerField(primary_key=True)   # Está aqui por enquanto
     nome = models.CharField(max_length=50)
     email = models.CharField(max_length=255, blank=True, null=True)
     senha = models.CharField(max_length=255, blank=True, null=True)
