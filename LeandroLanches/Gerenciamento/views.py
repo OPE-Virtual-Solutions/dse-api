@@ -170,7 +170,7 @@ class TbProdutoAPIView(APIView):
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = TbProdutoSerializer(data=request.data)
+        serializer = TbCreateProdutoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)

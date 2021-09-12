@@ -113,7 +113,7 @@ class TbPedidoSerializer(serializers.ModelSerializer):
 
 
 class TbIngredienteProdutoRelatedSerializer(serializers.ModelSerializer):
-    ingrediente = TbIngredienteSerializer(many = False)
+    ingrediente = TbIngredienteSerializer(many = False, read_only = True)
 
     class Meta:
         model = TbIngredienteProduto
@@ -141,9 +141,22 @@ class TbProdutoSerializer(serializers.ModelSerializer):
             'nome',
             'preco',
             'descricao',
+            'quantidade',
             'ativo',
             'categoria',
             "ingredientes"
+        )
+
+class TbCreateProdutoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TbProduto
+        fields = (
+            'nome',
+            'preco',
+            'descricao',
+            'quantidade',
+            'ativo',
+            'categoria',
         )
 
 
