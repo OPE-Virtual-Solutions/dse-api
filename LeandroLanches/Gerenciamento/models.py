@@ -60,6 +60,7 @@ class TbProduto(models.Model):
     preco = models.FloatField()
     descricao = models.CharField(max_length=400, blank=True, null=True)
     ativo = models.BooleanField()
+    quantidade = models.BigIntegerField(default = 0)
     categoria = models.ForeignKey(TbCategoria, models.DO_NOTHING, db_column='categoria', blank=True, null=True)
 
     class Meta:
