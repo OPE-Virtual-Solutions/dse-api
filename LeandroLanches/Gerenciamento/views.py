@@ -187,6 +187,13 @@ class TbProdutoAPIView(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+    def patch(self, request):
+        serializer = TbCreateProdutoSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 class TbUsuarioAPIView(APIView):
     """
@@ -242,7 +249,19 @@ class TbIngredienteViewSet(viewsets.ModelViewSet):
 
 class TbProdutoViewSet(viewsets.ModelViewSet):
     queryset = TbProduto.objects.all()
-    serializer_class = TbProdutoSerializer
+    serializer_class = TbCreateProdutoSerializer
+
+    def retrieve(self, request, pk = None):
+        produto = TbProduto.objects.get(id = pk)
+
+        serializer = TbProdutoSerializer(produto)
+
+        return Response(serializer.data, status = status.HTTP_200_OK)
+
+    def list(self, request):
+        produtos = TbProduto.objects.all()
+        serializer = TbProdutoSerializer(produtos, many=True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
 
 
 class TbIngredienteProdutoViewSet(viewsets.ModelViewSet):
