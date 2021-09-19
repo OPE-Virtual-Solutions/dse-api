@@ -2,46 +2,46 @@ from rest_framework import serializers
 from .models import *
 
 
-class TbBairroSerializer(serializers.ModelSerializer):
+class BairroSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = TbBairro
+        model = Bairro
         fields = (
-            'id',
-            'nome',
+            'id_bairro',
+            'nome_bairro',
             'cidade',
             'uf',
             'taxa',
         )
 
-
-class TbCategoriaSerializer(serializers.ModelSerializer):
+class CategoriaSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = TbCategoria
+        model = Categoria
         fields = (
-            'id',
-            'nome',
+            'id_categoria',
+            'nome_categoria',
             'ativo',
         )
 
 
-class TbClienteSerializer(serializers.ModelSerializer):
+class ClienteSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = TbCliente
+        model = Cliente
         fields = (
-            'id',
-            'nome',
+            'id_cliente',
+            'nome_cliente',
             'telefone',
         )
 
 
-class TbEnderecoSerializer(serializers.ModelSerializer):
+class EnderecoSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = TbEndereco
+        model = Endereco
         fields = (
+            'id_endereco',
             'cep',
             'logradouro',
             'numero',
@@ -50,43 +50,44 @@ class TbEnderecoSerializer(serializers.ModelSerializer):
         )
 
 
-class TbFuncionarioSerializer(serializers.ModelSerializer):
+class FuncionarioSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = TbFuncionario
+        model = Funcionario
         fields = (
-            'id',
+            'id_funcionario',
             'cargo',
         )
 
 
-class TbIngredienteSerializer(serializers.ModelSerializer):
+class IngredienteSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = TbIngrediente
+        model = Ingrediente
         fields = (
-            "id",
-            'nome',
+            "id_ingrediente",
+            'nome_ingrediente',
             'quantidade'
         )
 
 
-class TbIngredienteProdutoSerializer(serializers.ModelSerializer):
+class IngredienteProdutoSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = TbIngredienteProduto
+        model = IngredienteProduto
         fields = (
+            'id_ingrediente_produto',
             'produto',
             'ingrediente',
         )
 
 
-class TbItemPedidoSerializer(serializers.ModelSerializer):
+class ItemPedidoSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = TbItemPedido
+        model = ItemPedido
         fields = (
-            'id',
+            'id_item_pedido',
             'produto',
             'pedido',
             'quantidade',
@@ -94,11 +95,12 @@ class TbItemPedidoSerializer(serializers.ModelSerializer):
         )
 
 
-class TbPedidoSerializer(serializers.ModelSerializer):
+class PedidoSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = TbPedido
+        model = Pedido
         fields = (
+            'id_pedido',
             'codigo_pedido',
             'cliente',
             'endereco',
@@ -112,47 +114,61 @@ class TbPedidoSerializer(serializers.ModelSerializer):
         )
 
 
-class TbIngredienteProdutoRelatedSerializer(serializers.ModelSerializer):
-    ingrediente = TbIngredienteSerializer(many = False)
+
+
+class IngredienteProdutoRelatedSerializer(serializers.ModelSerializer):
+    ingrediente = IngredienteSerializer(many = False, read_only = True)
 
     class Meta:
-        model = TbIngredienteProduto
+        model = IngredienteProduto
         fields = (
             "ingrediente",
         )
     
     def to_representation(self, instance):
         return {
-            "id": instance.ingrediente.id,
-            "nome": instance.ingrediente.nome,
+            "id_ingrediente": instance.ingrediente.id_ingrediente,
+            "nome": instance.ingrediente.nome_ingrediente,
             "quantidade": instance.ingrediente.quantidade
         }
 
 
 
-class TbProdutoSerializer(serializers.ModelSerializer):
-    categoria = TbCategoriaSerializer()
-    ingredientes = TbIngredienteProdutoRelatedSerializer(many = True)
+class ProdutoSerializer(serializers.ModelSerializer):
+    categoria = serializers.SlugRelatedField(many=False, read_only=True, slug_field='nome_categoria')
+    ingredientes = IngredienteProdutoRelatedSerializer(many = True)
 
     class Meta:
-        model = TbProduto
+        model = Produto
         fields = (
-            'id',
-            'nome',
+            'id_produto',
+            'nome_produto',
             'preco',
             'descricao',
             'ativo',
             'categoria',
-            "ingredientes"
+            'ingredientes',
         )
 
 
-class TbUsuarioSerializer(serializers.ModelSerializer):
+class CreateProdutoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TbUsuario
+        model = Produto
         fields = (
-            'id',
-            'nome',
+            'nome_produto',
+            'preco',
+            'descricao',
+            'ativo',
+            'categoria',
+        )
+
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuario
+        fields = (
+            'id_usuario',
+            'nome_usuario',
             'email',
             'senha',
             'tipo',
