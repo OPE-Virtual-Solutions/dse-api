@@ -36,7 +36,7 @@ INSTALLED_APPS = [
     'rest_framework',
     # Minhas aplicações
     'Gerenciamento',
-    "corsheaders"
+    #'corsheaders'
 ]
 
 MIDDLEWARE = [
@@ -136,7 +136,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+"""
 # DRF
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -146,3 +146,4 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     )
 }
+"""

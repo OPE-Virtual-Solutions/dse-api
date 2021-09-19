@@ -1,3 +1,13 @@
+from django.views import generic
+from rest_framework import generics
+from rest_framework.generics import get_object_or_404
+
+from rest_framework import viewsets
+from rest_framework.decorators import action
+
+from rest_framework import mixins
+from rest_framework.serializers import Serializer
+
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -5,14 +15,16 @@ from rest_framework import serializers, status # Status dos métodos HTTP
 from .models import *
 from .serializers import *
 
-
-class TbBairroAPIView(APIView):
+"""
+API V1
+"""
+class BairroAPIView(APIView):
     """
     EndPoint de bairros
     """
 
     def get(self, request):
-        bairros = TbBairro.objects.all()
+        bairros = Bairro.objects.all()
         serializer = TbBairroSerializer(bairros, many=True)
         return Response(serializer.data)
 
@@ -23,171 +35,252 @@ class TbBairroAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class TbCategoriaAPIView(APIView):
+class CategoriaAPIView(APIView):
     """
     EndPoint de categorias
     """
 
     def get(self, request):
-        bairros = TbCategoria.objects.all()
-        serializer = TbCategoriaSerializer(bairros, many=True)
+        bairros = Categoria.objects.all()
+        serializer = CategoriaSerializer(bairros, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = TbCategoriaSerializer(data=request.data)
+        serializer = CategoriaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class TbClienteAPIView(APIView):
+class ClienteAPIView(APIView):
     """
     EndPoint de clientes
     """
 
     def get(self, request):
-        clientes = TbCliente.objects.all()
-        serializer = TbClienteSerializer(clientes, many=True)
+        clientes = Cliente.objects.all()
+        serializer = ClienteSerializer(clientes, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = TbClienteSerializer(data=request.data)
+        serializer = ClienteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class TbEnderecoAPIView(APIView):
+class EnderecoAPIView(APIView):
     """
     EndPoint de endereços
     """
 
     def get(self, request):
-        enderecos = TbEndereco.objects.all()
-        serializer = TbEnderecoSerializer(enderecos, many=True)
+        enderecos = Endereco.objects.all()
+        serializer = EnderecoSerializer(enderecos, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = TbEnderecoSerializer(data=request.data)
+        serializer = EnderecoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class TbFuncionarioAPIView(APIView):
+class FuncionarioAPIView(APIView):
     """
     EndPoint de funcionários
     """
 
     def get(self, request):
-        funcionarios = TbFuncionario.objects.all()
-        serializer = TbFuncionarioSerializer(funcionarios, many=True)
+        funcionarios = Funcionario.objects.all()
+        serializer = FuncionarioSerializer(funcionarios, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = TbFuncionarioSerializer(data=request.data)
+        serializer = FuncionarioSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class TbIngredienteAPIView(APIView):
+class IngredienteAPIView(APIView):
     """
     EndPoint de ingredientes
     """
 
     def get(self, request):
-        ingredientes = TbIngrediente.objects.all()
-        serializer = TbIngredienteSerializer(ingredientes, many=True)
+        ingredientes = Ingrediente.objects.all()
+        serializer = IngredienteSerializer(ingredientes, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = TbIngredienteSerializer(data=request.data)
+        serializer = IngredienteSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class TbIngredienteProdutoAPIView(APIView):
+class IngredienteProdutoAPIView(APIView):
     """
     EndPoint de Ingredientes do produto
     """
 
     def get(self, request):
         ingredientes_produto = TbIngredienteProduto.objects.all()
-        serializer = TbIngredienteProdutoSerializer(ingredientes_produto, many=True)
+        serializer = IngredienteProdutoSerializer(ingredientes_produto, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = TbIngredienteProdutoSerializer(data=request.data)
+        serializer = IngredienteProdutoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class TbItemPedidoAPIView(APIView):
+class ItemPedidoAPIView(APIView):
     """
     EndPoint de Itens dos produtos
     """
 
     def get(self, request):
-        itens_pedido = TbItemPedido.objects.all()
-        serializer = TbItemPedidoSerializer(itens_pedido, many=True)
+        itens_pedido = ItemPedido.objects.all()
+        serializer = ItemPedidoSerializer(itens_pedido, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = TbItemPedidoSerializer(data=request.data)
+        serializer = ItemPedidoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class TbPedidoAPIView(APIView):
+class PedidoAPIView(APIView):
     """
     EndPoint de pedidos
     """
 
     def get(self, request):
-        pedidos = TbPedido.objects.all()
-        serializer = TbPedidoSerializer(pedidos, many=True)
+        pedidos = Pedido.objects.all()
+        serializer = PedidoSerializer(pedidos, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = TbPedidoSerializer(data=request.data)
+        serializer = PedidoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class TbProdutoAPIView(APIView):
+class ProdutoAPIView(APIView):
     """
     EndPoint de produtos
     """
 
     def get(self, request):
-        produtos = TbProduto.objects.prefetch_related("ingredientes")
-        serializer = TbProdutoSerializer(produtos, many=True)
+        produtos = Produto.objects.prefetch_related("ingredientes")
+        serializer = ProdutoSerializer(produtos, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = TbProdutoSerializer(data=request.data)
+        serializer = ProdutoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class TbUsuarioAPIView(APIView):
+class UsuarioAPIView(APIView):
     """
     EndPoint de usuários
     """
 
     def get(self, request):
-        usuarios = TbUsuario.objects.all()
-        serializer = TbUsuarioSerializer(usuarios, many=True)
+        usuarios = Usuario.objects.all()
+        serializer = UsuarioSerializer(usuarios, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = TbUsuarioSerializer(data=request.data)
+        serializer = UsuarioSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+"""
+API V2
+"""
+
+
+class BairroViewSet(viewsets.ModelViewSet):
+    queryset = Bairro.objects.all()
+    serializer_class = BairroSerializer
+
+
+
+
+class CategoriaViewSet(viewsets.ModelViewSet):
+    queryset = Categoria.objects.all()
+    serializer_class = CategoriaSerializer
+
+
+class ClienteViewSet(viewsets.ModelViewSet):
+    queryset = Cliente.objects.all()
+    serializer_class = ClienteSerializer
+
+
+class EnderecoViewSet(viewsets.ModelViewSet):
+    queryset = Endereco.objects.all()
+    serializer_class = EnderecoSerializer
+
+
+class FuncionarioViewSet(viewsets.ModelViewSet):
+    queryset = Funcionario.objects.all()
+    serializer_class = FuncionarioSerializer
+
+
+class IngredienteViewSet(viewsets.ModelViewSet):
+    queryset = Ingrediente.objects.all()
+    serializer_class = IngredienteSerializer
+
+
+class ProdutoViewSet(viewsets.ModelViewSet):
+    queryset = Produto.objects.all()
+    serializer_class = CreateProdutoSerializer
+
+    def retrieve(self, request, pk = None):
+        produto = Produto.objects.get(id_produto = pk)
+        serializer = ProdutoSerializer(produto)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+
+    def list(self, request):
+        produtos = Produto.objects.all()
+        serializer = ProdutoSerializer(produtos, many=True)
+        return Response(serializer.data, status = status.HTTP_200_OK)
+
+    def destroy(self, request, pk = None):
+        produto = Produto.objects.get(id_produto = pk)
+        ingredientes_produto = IngredienteProduto.objects.filter(produto = produto)
+        self.perform_destroy(ingredientes_produto)
+        self.perform_destroy(produto)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
+class IngredienteProdutoViewSet(viewsets.ModelViewSet):
+    queryset = IngredienteProduto.objects.all()
+    serializer_class = IngredienteProdutoSerializer
+
+
+class ItemPedidoViewSet(viewsets.ModelViewSet):
+    queryset = ItemPedido.objects.all()
+    serializer_class = ItemPedidoSerializer
+
+
+class PedidoViewSet(viewsets.ModelViewSet):
+    queryset = Pedido.objects.all()
+    serializer_class = PedidoSerializer
+
+
+class UsuarioViewSet(viewsets.ModelViewSet):
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioSerializer
