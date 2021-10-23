@@ -27,11 +27,6 @@ class IngredienteAdmin(admin.ModelAdmin):
     list_display = ('nome_ingrediente','quantidade')
 
 
-@admin.register(IngredienteProduto)
-class IngredienteProdutoAdmin(admin.ModelAdmin):
-    list_display = ('produto','ingrediente')
-
-
 @admin.register(ItemPedido)
 class ItemPedidoAmin(admin.ModelAdmin):
     list_display = ('produto', 'pedido','quantidade', 'preco')
