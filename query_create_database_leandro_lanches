@@ -1,0 +1,451 @@
+-- DROP SCHEMA dbo;
+
+CREATE SCHEMA dbo;
+-- LeandroLanches.dbo.TB_BAIRRO definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.TB_BAIRRO;
+
+CREATE TABLE LeandroLanches.dbo.TB_BAIRRO (
+	ID_BAIRRO int IDENTITY(1,1) NOT NULL,
+	NOME_BAIRRO varchar(50) COLLATE Latin1_General_CI_AS NOT NULL,
+	cidade varchar(50) COLLATE Latin1_General_CI_AS NOT NULL,
+	uf varchar(2) COLLATE Latin1_General_CI_AS DEFAULT 'SP' NOT NULL,
+	taxa float DEFAULT 0 NULL,
+	CONSTRAINT PK__TB_BAIRR__3213E83F61F2B46C PRIMARY KEY (ID_BAIRRO)
+);
+
+
+-- LeandroLanches.dbo.TB_CATEGORIA definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.TB_CATEGORIA;
+
+CREATE TABLE LeandroLanches.dbo.TB_CATEGORIA (
+	ID_CATEGORIA int IDENTITY(1,1) NOT NULL,
+	NOME_CATEGORIA varchar(50) COLLATE Latin1_General_CI_AS NOT NULL,
+	ativo bit NOT NULL,
+	CONSTRAINT PK__TB_CATEG__3213E83F7CCAD4FF PRIMARY KEY (ID_CATEGORIA)
+);
+
+
+-- LeandroLanches.dbo.TB_INGREDIENTE definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.TB_INGREDIENTE;
+
+CREATE TABLE LeandroLanches.dbo.TB_INGREDIENTE (
+	ID_INGREDIENTE int IDENTITY(1,1) NOT NULL,
+	NOME_INGREDIENTE varchar(50) COLLATE Latin1_General_CI_AS NOT NULL,
+	quantidade int DEFAULT 0 NOT NULL,
+	CONSTRAINT PK__TB_INGRE__3213E83F6CE11912 PRIMARY KEY (ID_INGREDIENTE)
+);
+
+
+-- LeandroLanches.dbo.TB_USUARIO definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.TB_USUARIO;
+
+CREATE TABLE LeandroLanches.dbo.TB_USUARIO (
+	id_usuario int IDENTITY(1,1) NOT NULL,
+	nome_usuario varchar(50) COLLATE Latin1_General_CI_AS NOT NULL,
+	email varchar(255) COLLATE Latin1_General_CI_AS NULL,
+	senha varchar(255) COLLATE Latin1_General_CI_AS NULL,
+	tipo nvarchar(255) COLLATE Latin1_General_CI_AS NOT NULL,
+	CONSTRAINT PK__TB_USUAR__4E3E04AD17AF9BE9 PRIMARY KEY (id_usuario)
+);
+
+
+-- LeandroLanches.dbo.auth_group definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.auth_group;
+
+CREATE TABLE LeandroLanches.dbo.auth_group (
+	id int IDENTITY(1,1) NOT NULL,
+	name nvarchar(150) COLLATE Latin1_General_CI_AS NOT NULL,
+	CONSTRAINT PK__auth_gro__3213E83F3BA5336E PRIMARY KEY (id),
+	CONSTRAINT auth_group_name_a6ea08ec_uniq UNIQUE (name)
+);
+CREATE UNIQUE NONCLUSTERED INDEX auth_group_name_a6ea08ec_uniq ON LeandroLanches.dbo.auth_group (name);
+
+
+-- LeandroLanches.dbo.auth_user definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.auth_user;
+
+CREATE TABLE LeandroLanches.dbo.auth_user (
+	id int IDENTITY(1,1) NOT NULL,
+	password nvarchar(128) COLLATE Latin1_General_CI_AS NOT NULL,
+	last_login datetime2 NULL,
+	is_superuser bit NOT NULL,
+	username nvarchar(150) COLLATE Latin1_General_CI_AS NOT NULL,
+	first_name nvarchar(150) COLLATE Latin1_General_CI_AS NOT NULL,
+	last_name nvarchar(150) COLLATE Latin1_General_CI_AS NOT NULL,
+	email nvarchar(254) COLLATE Latin1_General_CI_AS NOT NULL,
+	is_staff bit NOT NULL,
+	is_active bit NOT NULL,
+	date_joined datetime2 NOT NULL,
+	CONSTRAINT PK__auth_use__3213E83FF378E007 PRIMARY KEY (id),
+	CONSTRAINT auth_user_username_6821ab7c_uniq UNIQUE (username)
+);
+CREATE UNIQUE NONCLUSTERED INDEX auth_user_username_6821ab7c_uniq ON LeandroLanches.dbo.auth_user (username);
+
+
+-- LeandroLanches.dbo.django_content_type definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.django_content_type;
+
+CREATE TABLE LeandroLanches.dbo.django_content_type (
+	id int IDENTITY(1,1) NOT NULL,
+	app_label nvarchar(100) COLLATE Latin1_General_CI_AS NOT NULL,
+	model nvarchar(100) COLLATE Latin1_General_CI_AS NOT NULL,
+	CONSTRAINT PK__django_c__3213E83F140BE0F5 PRIMARY KEY (id)
+);
+ CREATE  UNIQUE NONCLUSTERED INDEX django_content_type_app_label_model_76bd3d3b_uniq ON dbo.django_content_type (  app_label ASC  , model ASC  )  
+	 WHERE  ([app_label] IS NOT NULL AND [model] IS NOT NULL)
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+
+
+-- LeandroLanches.dbo.django_migrations definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.django_migrations;
+
+CREATE TABLE LeandroLanches.dbo.django_migrations (
+	id bigint IDENTITY(1,1) NOT NULL,
+	app nvarchar(255) COLLATE Latin1_General_CI_AS NOT NULL,
+	name nvarchar(255) COLLATE Latin1_General_CI_AS NOT NULL,
+	applied datetime2 NOT NULL,
+	CONSTRAINT PK__django_m__3213E83F3AF497AF PRIMARY KEY (id)
+);
+
+
+-- LeandroLanches.dbo.django_session definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.django_session;
+
+CREATE TABLE LeandroLanches.dbo.django_session (
+	session_key nvarchar(40) COLLATE Latin1_General_CI_AS NOT NULL,
+	session_data nvarchar COLLATE Latin1_General_CI_AS NOT NULL,
+	expire_date datetime2 NOT NULL,
+	CONSTRAINT PK__django_s__B3BA0F1F9A5321F3 PRIMARY KEY (session_key)
+);
+ CREATE NONCLUSTERED INDEX django_session_expire_date_a5c62663 ON dbo.django_session (  expire_date ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+
+
+-- LeandroLanches.dbo.TB_CLIENTE definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.TB_CLIENTE;
+
+CREATE TABLE LeandroLanches.dbo.TB_CLIENTE (
+	id_cliente int NOT NULL,
+	NOME_CLIENTE varchar(50) COLLATE Latin1_General_CI_AS NOT NULL,
+	telefone varchar(11) COLLATE Latin1_General_CI_AS NULL,
+	CONSTRAINT PK__TB_CLIEN__677F38F553F965C3 PRIMARY KEY (id_cliente),
+	CONSTRAINT FK__TB_CLIENT__id_cl__236943A5 FOREIGN KEY (id_cliente) REFERENCES LeandroLanches.dbo.TB_USUARIO(id_usuario)
+);
+
+
+-- LeandroLanches.dbo.TB_ENDERECO definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.TB_ENDERECO;
+
+CREATE TABLE LeandroLanches.dbo.TB_ENDERECO (
+	id_endereco int IDENTITY(1,1) NOT NULL,
+	cep varchar(8) COLLATE Latin1_General_CI_AS NOT NULL,
+	logradouro varchar(50) COLLATE Latin1_General_CI_AS NOT NULL,
+	numero int NULL,
+	bairro int NULL,
+	cliente int NOT NULL,
+	CONSTRAINT PK__TB_ENDER__324B959E7A33DA38 PRIMARY KEY (id_endereco),
+	CONSTRAINT FK__TB_ENDERE__bairr__2645B050 FOREIGN KEY (bairro) REFERENCES LeandroLanches.dbo.TB_BAIRRO(ID_BAIRRO),
+	CONSTRAINT FK__TB_ENDERE__clien__2739D489 FOREIGN KEY (cliente) REFERENCES LeandroLanches.dbo.TB_CLIENTE(id_cliente)
+);
+
+
+-- LeandroLanches.dbo.TB_FUNCIONARIO definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.TB_FUNCIONARIO;
+
+CREATE TABLE LeandroLanches.dbo.TB_FUNCIONARIO (
+	id_funcionario int NOT NULL,
+	cargo nvarchar(255) COLLATE Latin1_General_CI_AS NOT NULL,
+	CONSTRAINT PK__TB_FUNCI__6FBD69C4B23B702A PRIMARY KEY (id_funcionario),
+	CONSTRAINT FK__TB_FUNCIO__id_fu__2A164134 FOREIGN KEY (id_funcionario) REFERENCES LeandroLanches.dbo.TB_USUARIO(id_usuario)
+);
+
+
+-- LeandroLanches.dbo.TB_PEDIDO definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.TB_PEDIDO;
+
+CREATE TABLE LeandroLanches.dbo.TB_PEDIDO (
+	id_pedido int IDENTITY(1,1) NOT NULL,
+	codigo_pedido varchar(8) COLLATE Latin1_General_CI_AS NULL,
+	cliente int NULL,
+	endereco int NULL,
+	atendimento_presencial bit NOT NULL,
+	valor_total float NULL,
+	metodo_pagamento nvarchar(255) COLLATE Latin1_General_CI_AS NOT NULL,
+	status nvarchar(255) COLLATE Latin1_General_CI_AS NOT NULL,
+	criado_em datetime DEFAULT 'now()' NOT NULL,
+	finalizado_em datetime NULL,
+	funcionario int NULL,
+	TIPO_PEDIDO varchar(10) COLLATE Latin1_General_CI_AS NULL,
+	CONSTRAINT PK__TB_PEDID__6FF0148949A5A8BB PRIMARY KEY (id_pedido),
+	CONSTRAINT FK__TB_PEDIDO__clien__3C34F16F FOREIGN KEY (cliente) REFERENCES LeandroLanches.dbo.TB_CLIENTE(id_cliente),
+	CONSTRAINT FK__TB_PEDIDO__ender__3D2915A8 FOREIGN KEY (endereco) REFERENCES LeandroLanches.dbo.TB_ENDERECO(id_endereco),
+	CONSTRAINT FK__TB_PEDIDO__funci__3E1D39E1 FOREIGN KEY (funcionario) REFERENCES LeandroLanches.dbo.TB_FUNCIONARIO(id_funcionario)
+);
+
+
+-- LeandroLanches.dbo.TB_PRODUTO definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.TB_PRODUTO;
+
+CREATE TABLE LeandroLanches.dbo.TB_PRODUTO (
+	ID_PRODUTO int IDENTITY(1,1) NOT NULL,
+	NOME_PRODUTO varchar(100) COLLATE Latin1_General_CI_AS NOT NULL,
+	preco float DEFAULT 0 NOT NULL,
+	descricao varchar(400) COLLATE Latin1_General_CI_AS NULL,
+	ativo bit NOT NULL,
+	categoria int NULL,
+	CONSTRAINT PK__TB_PRODU__3213E83FD8495CCC PRIMARY KEY (ID_PRODUTO),
+	CONSTRAINT FK__TB_PRODUT__categ__3C69FB99 FOREIGN KEY (categoria) REFERENCES LeandroLanches.dbo.TB_CATEGORIA(ID_CATEGORIA)
+);
+
+
+-- LeandroLanches.dbo.auth_permission definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.auth_permission;
+
+CREATE TABLE LeandroLanches.dbo.auth_permission (
+	id int IDENTITY(1,1) NOT NULL,
+	name nvarchar(255) COLLATE Latin1_General_CI_AS NOT NULL,
+	content_type_id int NOT NULL,
+	codename nvarchar(100) COLLATE Latin1_General_CI_AS NOT NULL,
+	CONSTRAINT PK__auth_per__3213E83F106D7AF3 PRIMARY KEY (id),
+	CONSTRAINT auth_permission_content_type_id_2f476e4b_fk_django_content_type_id FOREIGN KEY (content_type_id) REFERENCES LeandroLanches.dbo.django_content_type(id)
+);
+ CREATE NONCLUSTERED INDEX auth_permission_content_type_id_2f476e4b ON dbo.auth_permission (  content_type_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE  UNIQUE NONCLUSTERED INDEX auth_permission_content_type_id_codename_01ab375a_uniq ON dbo.auth_permission (  content_type_id ASC  , codename ASC  )  
+	 WHERE  ([content_type_id] IS NOT NULL AND [codename] IS NOT NULL)
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+
+
+-- LeandroLanches.dbo.auth_user_groups definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.auth_user_groups;
+
+CREATE TABLE LeandroLanches.dbo.auth_user_groups (
+	id bigint IDENTITY(1,1) NOT NULL,
+	user_id int NOT NULL,
+	group_id int NOT NULL,
+	CONSTRAINT PK__auth_use__3213E83FA8BD2D92 PRIMARY KEY (id),
+	CONSTRAINT auth_user_groups_group_id_97559544_fk_auth_group_id FOREIGN KEY (group_id) REFERENCES LeandroLanches.dbo.auth_group(id),
+	CONSTRAINT auth_user_groups_user_id_6a12ed8b_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES LeandroLanches.dbo.auth_user(id)
+);
+ CREATE NONCLUSTERED INDEX auth_user_groups_group_id_97559544 ON dbo.auth_user_groups (  group_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE NONCLUSTERED INDEX auth_user_groups_user_id_6a12ed8b ON dbo.auth_user_groups (  user_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE  UNIQUE NONCLUSTERED INDEX auth_user_groups_user_id_group_id_94350c0c_uniq ON dbo.auth_user_groups (  user_id ASC  , group_id ASC  )  
+	 WHERE  ([user_id] IS NOT NULL AND [group_id] IS NOT NULL)
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+
+
+-- LeandroLanches.dbo.auth_user_user_permissions definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.auth_user_user_permissions;
+
+CREATE TABLE LeandroLanches.dbo.auth_user_user_permissions (
+	id bigint IDENTITY(1,1) NOT NULL,
+	user_id int NOT NULL,
+	permission_id int NOT NULL,
+	CONSTRAINT PK__auth_use__3213E83F1CA46BCB PRIMARY KEY (id),
+	CONSTRAINT auth_user_user_permissions_permission_id_1fbb5f2c_fk_auth_permission_id FOREIGN KEY (permission_id) REFERENCES LeandroLanches.dbo.auth_permission(id),
+	CONSTRAINT auth_user_user_permissions_user_id_a95ead1b_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES LeandroLanches.dbo.auth_user(id)
+);
+ CREATE NONCLUSTERED INDEX auth_user_user_permissions_permission_id_1fbb5f2c ON dbo.auth_user_user_permissions (  permission_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE NONCLUSTERED INDEX auth_user_user_permissions_user_id_a95ead1b ON dbo.auth_user_user_permissions (  user_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE  UNIQUE NONCLUSTERED INDEX auth_user_user_permissions_user_id_permission_id_14a6b632_uniq ON dbo.auth_user_user_permissions (  user_id ASC  , permission_id ASC  )  
+	 WHERE  ([user_id] IS NOT NULL AND [permission_id] IS NOT NULL)
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+
+
+-- LeandroLanches.dbo.authtoken_token definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.authtoken_token;
+
+CREATE TABLE LeandroLanches.dbo.authtoken_token (
+	[key] nvarchar(40) COLLATE Latin1_General_CI_AS NOT NULL,
+	created datetime2 NOT NULL,
+	user_id int NOT NULL,
+	CONSTRAINT PK__authtoke__DFD83CAE3CC87157 PRIMARY KEY ([key]),
+	CONSTRAINT UQ__authtoke__B9BE370E138DA0D5 UNIQUE (user_id),
+	CONSTRAINT authtoken_token_user_id_35299eff_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES LeandroLanches.dbo.auth_user(id)
+);
+CREATE UNIQUE NONCLUSTERED INDEX UQ__authtoke__B9BE370E138DA0D5 ON LeandroLanches.dbo.authtoken_token (user_id);
+
+
+-- LeandroLanches.dbo.django_admin_log definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.django_admin_log;
+
+CREATE TABLE LeandroLanches.dbo.django_admin_log (
+	id int IDENTITY(1,1) NOT NULL,
+	action_time datetime2 NOT NULL,
+	object_id nvarchar COLLATE Latin1_General_CI_AS NULL,
+	object_repr nvarchar(200) COLLATE Latin1_General_CI_AS NOT NULL,
+	action_flag smallint NOT NULL,
+	change_message nvarchar COLLATE Latin1_General_CI_AS NOT NULL,
+	content_type_id int NULL,
+	user_id int NOT NULL,
+	CONSTRAINT PK__django_a__3213E83F0E5AF67D PRIMARY KEY (id),
+	CONSTRAINT django_admin_log_content_type_id_c4bce8eb_fk_django_content_type_id FOREIGN KEY (content_type_id) REFERENCES LeandroLanches.dbo.django_content_type(id),
+	CONSTRAINT django_admin_log_user_id_c564eba6_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES LeandroLanches.dbo.auth_user(id)
+);
+ CREATE NONCLUSTERED INDEX django_admin_log_content_type_id_c4bce8eb ON dbo.django_admin_log (  content_type_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE NONCLUSTERED INDEX django_admin_log_user_id_c564eba6 ON dbo.django_admin_log (  user_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ALTER TABLE LeandroLanches.dbo.django_admin_log WITH NOCHECK ADD CONSTRAINT django_admin_log_action_flag_a8637d59_check CHECK ([action_flag]>=(0));
+
+
+-- LeandroLanches.dbo.knox_authtoken definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.knox_authtoken;
+
+CREATE TABLE LeandroLanches.dbo.knox_authtoken (
+	digest nvarchar(128) COLLATE Latin1_General_CI_AS NOT NULL,
+	salt nvarchar(16) COLLATE Latin1_General_CI_AS NOT NULL,
+	created datetime2 NOT NULL,
+	user_id int NOT NULL,
+	expiry datetime2 NULL,
+	token_key nvarchar(8) COLLATE Latin1_General_CI_AS NOT NULL,
+	CONSTRAINT UQ__knox_aut__6EB368948E6AC9AA UNIQUE (salt),
+	CONSTRAINT knox_authtoken_digest_188c7e77_uniq UNIQUE (digest),
+	CONSTRAINT knox_authtoken_user_id_e5a5d899_fk_auth_user_id FOREIGN KEY (user_id) REFERENCES LeandroLanches.dbo.auth_user(id)
+);
+CREATE UNIQUE NONCLUSTERED INDEX UQ__knox_aut__6EB368948E6AC9AA ON LeandroLanches.dbo.knox_authtoken (salt);
+CREATE UNIQUE NONCLUSTERED INDEX knox_authtoken_digest_188c7e77_uniq ON LeandroLanches.dbo.knox_authtoken (digest);
+ CREATE NONCLUSTERED INDEX knox_authtoken_token_key_8f4f7d47_idx ON dbo.knox_authtoken (  token_key ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE NONCLUSTERED INDEX knox_authtoken_user_id_e5a5d899 ON dbo.knox_authtoken (  user_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+
+
+-- LeandroLanches.dbo.TB_INGREDIENTE_PRODUTO definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.TB_INGREDIENTE_PRODUTO;
+
+CREATE TABLE LeandroLanches.dbo.TB_INGREDIENTE_PRODUTO (
+	ID_INGREDIENTE_PRODUTO int IDENTITY(1,1) NOT NULL,
+	produto int NOT NULL,
+	ingrediente int NOT NULL,
+	CONSTRAINT PK__TB_INGRE__3213E83F9F0AE37E PRIMARY KEY (ID_INGREDIENTE_PRODUTO),
+	CONSTRAINT FK__TB_INGRED__ingre__3F466844 FOREIGN KEY (ingrediente) REFERENCES LeandroLanches.dbo.TB_INGREDIENTE(ID_INGREDIENTE),
+	CONSTRAINT FK__TB_INGRED__produ__403A8C7D FOREIGN KEY (produto) REFERENCES LeandroLanches.dbo.TB_PRODUTO(ID_PRODUTO)
+);
+
+
+-- LeandroLanches.dbo.TB_ITEM_PEDIDO definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.TB_ITEM_PEDIDO;
+
+CREATE TABLE LeandroLanches.dbo.TB_ITEM_PEDIDO (
+	id_item_pedido int IDENTITY(1,1) NOT NULL,
+	produto int NOT NULL,
+	pedido int NULL,
+	quantidade int DEFAULT 1 NOT NULL,
+	preco float NOT NULL,
+	CONFIRMADO int NULL,
+	CONSTRAINT PK__TB_ITEM___D6E222505B126348 PRIMARY KEY (id_item_pedido),
+	CONSTRAINT FK__TB_ITEM_P__pedid__46B27FE2 FOREIGN KEY (pedido) REFERENCES LeandroLanches.dbo.TB_PEDIDO(id_pedido),
+	CONSTRAINT FK__TB_ITEM_P__produ__47A6A41B FOREIGN KEY (produto) REFERENCES LeandroLanches.dbo.TB_PRODUTO(ID_PRODUTO)
+);
+
+
+-- LeandroLanches.dbo.auth_group_permissions definition
+
+-- Drop table
+
+-- DROP TABLE LeandroLanches.dbo.auth_group_permissions;
+
+CREATE TABLE LeandroLanches.dbo.auth_group_permissions (
+	id bigint IDENTITY(1,1) NOT NULL,
+	group_id int NOT NULL,
+	permission_id int NOT NULL,
+	CONSTRAINT PK__auth_gro__3213E83FF06EC8A0 PRIMARY KEY (id),
+	CONSTRAINT auth_group_permissions_group_id_b120cbf9_fk_auth_group_id FOREIGN KEY (group_id) REFERENCES LeandroLanches.dbo.auth_group(id),
+	CONSTRAINT auth_group_permissions_permission_id_84c5c92e_fk_auth_permission_id FOREIGN KEY (permission_id) REFERENCES LeandroLanches.dbo.auth_permission(id)
+);
+ CREATE NONCLUSTERED INDEX auth_group_permissions_group_id_b120cbf9 ON dbo.auth_group_permissions (  group_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE  UNIQUE NONCLUSTERED INDEX auth_group_permissions_group_id_permission_id_0cd325b0_uniq ON dbo.auth_group_permissions (  group_id ASC  , permission_id ASC  )  
+	 WHERE  ([group_id] IS NOT NULL AND [permission_id] IS NOT NULL)
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+ CREATE NONCLUSTERED INDEX auth_group_permissions_permission_id_84c5c92e ON dbo.auth_group_permissions (  permission_id ASC  )  
+	 WITH (  PAD_INDEX = OFF ,FILLFACTOR = 100  ,SORT_IN_TEMPDB = OFF , IGNORE_DUP_KEY = OFF , STATISTICS_NORECOMPUTE = OFF , ONLINE = OFF , ALLOW_ROW_LOCKS = ON , ALLOW_PAGE_LOCKS = ON  )
+	 ON [PRIMARY ] ;
+

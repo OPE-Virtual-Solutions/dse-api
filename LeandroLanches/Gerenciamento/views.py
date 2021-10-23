@@ -1,220 +1,43 @@
-from django.views import generic
+
+from django.http.response import JsonResponse
 from rest_framework import generics
-from rest_framework.generics import get_object_or_404
-
 from rest_framework import viewsets
-from rest_framework.decorators import action
-
-from rest_framework import mixins
 from rest_framework.serializers import Serializer
-
-from django.shortcuts import render
-from rest_framework.views import APIView
+from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework import serializers, status # Status dos métodos HTTP 
 from .models import *
 from .serializers import *
-
-"""
-API V1
-"""
-class BairroAPIView(APIView):
-    """
-    EndPoint de bairros
-    """
-
-    def get(self, request):
-        bairros = Bairro.objects.all()
-        serializer = TbBairroSerializer(bairros, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = TbBairroSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class CategoriaAPIView(APIView):
-    """
-    EndPoint de categorias
-    """
-
-    def get(self, request):
-        bairros = Categoria.objects.all()
-        serializer = CategoriaSerializer(bairros, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = CategoriaSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class ClienteAPIView(APIView):
-    """
-    EndPoint de clientes
-    """
-
-    def get(self, request):
-        clientes = Cliente.objects.all()
-        serializer = ClienteSerializer(clientes, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = ClienteSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class EnderecoAPIView(APIView):
-    """
-    EndPoint de endereços
-    """
-
-    def get(self, request):
-        enderecos = Endereco.objects.all()
-        serializer = EnderecoSerializer(enderecos, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = EnderecoSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class FuncionarioAPIView(APIView):
-    """
-    EndPoint de funcionários
-    """
-
-    def get(self, request):
-        funcionarios = Funcionario.objects.all()
-        serializer = FuncionarioSerializer(funcionarios, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = FuncionarioSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class IngredienteAPIView(APIView):
-    """
-    EndPoint de ingredientes
-    """
-
-    def get(self, request):
-        ingredientes = Ingrediente.objects.all()
-        serializer = IngredienteSerializer(ingredientes, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = IngredienteSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class IngredienteProdutoAPIView(APIView):
-    """
-    EndPoint de Ingredientes do produto
-    """
-
-    def get(self, request):
-        ingredientes_produto = TbIngredienteProduto.objects.all()
-        serializer = IngredienteProdutoSerializer(ingredientes_produto, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = IngredienteProdutoSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class ItemPedidoAPIView(APIView):
-    """
-    EndPoint de Itens dos produtos
-    """
-
-    def get(self, request):
-        itens_pedido = ItemPedido.objects.all()
-        serializer = ItemPedidoSerializer(itens_pedido, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = ItemPedidoSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class PedidoAPIView(APIView):
-    """
-    EndPoint de pedidos
-    """
-
-    def get(self, request):
-        pedidos = Pedido.objects.all()
-        serializer = PedidoSerializer(pedidos, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = PedidoSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class ProdutoAPIView(APIView):
-    """
-    EndPoint de produtos
-    """
-
-    def get(self, request):
-        produtos = Produto.objects.prefetch_related("ingredientes")
-        serializer = ProdutoSerializer(produtos, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = ProdutoSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class UsuarioAPIView(APIView):
-    """
-    EndPoint de usuários
-    """
-
-    def get(self, request):
-        usuarios = Usuario.objects.all()
-        serializer = UsuarioSerializer(usuarios, many=True)
-        return Response(serializer.data)
-
-    def post(self, request):
-        serializer = UsuarioSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+from .permissions import *
+from rest_framework.permissions import AllowAny
+from knox.models import AuthToken
+from knox.views import LoginView as KnoxLoginView
+from rest_framework.authtoken.serializers import AuthTokenSerializer
+from django.contrib.auth import login
 
 """
 API V2
 """
-
-
 class BairroViewSet(viewsets.ModelViewSet):
     queryset = Bairro.objects.all()
+    print('teste',queryset)
     serializer_class = BairroSerializer
 
-
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        cidade = serializer.initial_data['cidade']
+        bairro = serializer.initial_data['nome_bairro']
+        lista_cidade = ['Barueri']
+        lista_bairros = ['Jd Isaura', 'Pq Santana']
+        # print("oiiii",Bairro.objects.filter(nome_bairro=bairro).exists())
+        if (cidade in lista_cidade or bairro in lista_bairros):
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            # print(serializer.data)
+            headers = self.get_success_headers(serializer.data)
+        else:
+            raise Exception
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class CategoriaViewSet(viewsets.ModelViewSet):
@@ -238,42 +61,51 @@ class FuncionarioViewSet(viewsets.ModelViewSet):
 
 
 class IngredienteViewSet(viewsets.ModelViewSet):
-    queryset = Ingrediente.objects.all()
     serializer_class = IngredienteSerializer
+    queryset = Ingrediente.objects.all()
 
 
 class ProdutoViewSet(viewsets.ModelViewSet):
+    serializer_class = ProdutoSerializer
     queryset = Produto.objects.all()
-    serializer_class = CreateProdutoSerializer
 
-    def retrieve(self, request, pk = None):
-        produto = Produto.objects.get(id_produto = pk)
-        serializer = ProdutoSerializer(produto)
-        return Response(serializer.data, status = status.HTTP_200_OK)
+    def create(self, request, *args, **kwargs):
+        data = request.data
 
-    def list(self, request):
-        produtos = Produto.objects.all()
-        serializer = ProdutoSerializer(produtos, many=True)
-        return Response(serializer.data, status = status.HTTP_200_OK)
+        novo_produto = Produto.objects.create(
+            nome_produto = data["nome_produto"],
+            preco = data["preco"],
+            descricao = data["descricao"],
+            ativo = data["ativo"]
+        )
+    
+        novo_produto.save()
 
-    def destroy(self, request, pk = None):
-        produto = Produto.objects.get(id_produto = pk)
-        ingredientes_produto = IngredienteProduto.objects.filter(produto = produto)
-        self.perform_destroy(ingredientes_produto)
-        self.perform_destroy(produto)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        for ingrediente in data["ingredientes"]:
+            ingrediente_obj = Ingrediente.objects.get(nome_ingrediente=ingrediente["nome_ingrediente"])
+            print(ingrediente,ingrediente_obj)
+            novo_produto.ingredientes.add(ingrediente_obj)
+        
+        serializer = ProdutoSerializer(novo_produto)
 
-    def perform_destroy(self, instance):
-        instance.delete()
-
-class IngredienteProdutoViewSet(viewsets.ModelViewSet):
-    queryset = IngredienteProduto.objects.all()
-    serializer_class = IngredienteProdutoSerializer
+        return Response(serializer.data)
 
 
 class ItemPedidoViewSet(viewsets.ModelViewSet):
     queryset = ItemPedido.objects.all()
     serializer_class = ItemPedidoSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.initial_data['confirmado'] = 0
+        print(serializer)
+        if serializer.initial_data['pedido'] is not None:
+            serializer.initial_data['confirmado'] = 1
+        print(serializer.initial_data['confirmado'])
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class PedidoViewSet(viewsets.ModelViewSet):
@@ -284,3 +116,48 @@ class PedidoViewSet(viewsets.ModelViewSet):
 class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
+
+'''class GrupoViewSet(viewsets.ModelViewSet):
+    permission_classes = (  GrupoAdmin,
+                            permissions.DjangoModelPermissions,)
+    queryset = AuthGroup.objects.all()
+    serializer_class = GrupoSerializer
+'''
+
+
+class RegistrarViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = RegistrarSerializer
+
+    def list(self, request, *args, **kwargs):
+        msg = {"mensagem":"Bem-vindo registre-se"}
+        return JsonResponse(msg)
+    
+    def retrieve(self, request, *args, **kwargs):
+        msg = {"mensagem":"Não é possivel acessar a página"}
+        return JsonResponse(msg)
+
+
+class RegisterAPI(generics.GenericAPIView):
+    serializer_class = RegisterSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response({
+        "user": RegistrarSerializer(user, context=self.get_serializer_context()).data,
+        "token": AuthToken.objects.create(user)[1]
+        })
+
+
+class LoginAPI(KnoxLoginView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, format=None):
+        serializer = AuthTokenSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        return super(LoginAPI, self).post(request, format=None)

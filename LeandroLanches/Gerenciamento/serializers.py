@@ -1,5 +1,12 @@
+
+from django.db.models import fields
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth.models import User
+from datetime import date
 from .models import *
+from .serializers import *
 
 
 class BairroSerializer(serializers.ModelSerializer):
@@ -60,43 +67,23 @@ class FuncionarioSerializer(serializers.ModelSerializer):
         )
 
 
-class IngredienteSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Ingrediente
-        fields = (
-            "id_ingrediente",
-            'nome_ingrediente',
-            'quantidade'
-        )
-
-
-class IngredienteProdutoSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = IngredienteProduto
-        fields = (
-            'id_ingrediente_produto',
-            'produto',
-            'ingrediente',
-        )
-
-
 class ItemPedidoSerializer(serializers.ModelSerializer):
 
     class Meta:
+
         model = ItemPedido
         fields = (
             'id_item_pedido',
             'produto',
             'pedido',
             'quantidade',
-            'preco'
+            'preco',
+            'confirmado',
         )
 
 
 class PedidoSerializer(serializers.ModelSerializer):
-
+  
     class Meta:
         model = Pedido
         fields = (
@@ -110,57 +97,21 @@ class PedidoSerializer(serializers.ModelSerializer):
             'status',
             'criado_em',
             'finalizado_em',
-            'funcionario'
+            'funcionario',
         )
 
 
-
-
-class IngredienteProdutoRelatedSerializer(serializers.ModelSerializer):
-    ingrediente = IngredienteSerializer(many = False, read_only = True)
-
+class IngredienteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = IngredienteProduto
-        fields = (
-            "ingrediente",
-        )
-    
-    def to_representation(self, instance):
-        return {
-            "id_ingrediente": instance.ingrediente.id_ingrediente,
-            "nome": instance.ingrediente.nome_ingrediente,
-            "quantidade": instance.ingrediente.quantidade
-        }
-
+        model = Ingrediente
+        fields = ('id_ingrediente', 'nome_ingrediente', 'quantidade',)
 
 
 class ProdutoSerializer(serializers.ModelSerializer):
-    categoria = serializers.SlugRelatedField(many=False, read_only=True, slug_field='nome_categoria')
-    ingredientes = IngredienteProdutoRelatedSerializer(many = True)
-
     class Meta:
+        categoria = serializers.SlugRelatedField(many=False, read_only=True, slug_field='nome_categoria')
         model = Produto
-        fields = (
-            'id_produto',
-            'nome_produto',
-            'preco',
-            'descricao',
-            'ativo',
-            'categoria',
-            'ingredientes',
-        )
-
-
-class CreateProdutoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Produto
-        fields = (
-            'nome_produto',
-            'preco',
-            'descricao',
-            'ativo',
-            'categoria',
-        )
+        fields = ('id_produto', 'nome_produto', 'preco', 'descricao', 'ativo', 'categoria', 'ingredientes',)
 
 
 class UsuarioSerializer(serializers.ModelSerializer):
@@ -173,3 +124,53 @@ class UsuarioSerializer(serializers.ModelSerializer):
             'senha',
             'tipo',
         )
+
+
+class RegisterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email', 'password')
+        extra_kwargs = {'password': {'write_only': True}}
+
+
+class RegistrarSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+            required=True,
+            validators=[UniqueValidator(queryset=User.objects.all())]
+            )
+
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    password2 = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ('username', 'password', 'password2', 'email', 'first_name', 'last_name', 'is_staff', 'is_superuser', 'is_active')
+        extra_kwargs = {
+            'first_name': {'required': True},
+            'last_name': {'required': True}
+        }
+
+    def validate(self, attrs):
+        if attrs['password'] != attrs['password2']:
+            raise serializers.ValidationError({"password": "Password fields didn't match."})
+
+        return attrs
+
+    def create(self, validated_data):
+        user = User.objects.create(
+            username=validated_data['username'],
+            email=validated_data['email'],
+            first_name=validated_data['first_name'],
+            last_name=validated_data['last_name'],
+            is_staff=validated_data['is_staff'],
+            is_superuser=validated_data['is_superuser'],
+            is_active = validated_data['is_active'],
+            password = validated_data['password'],
+            date_joined = date.today()
+        )
+
+        
+        user.set_password(validated_data['password'])
+        user.save()
+
+        return user

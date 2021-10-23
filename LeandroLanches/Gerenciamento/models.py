@@ -1,15 +1,33 @@
-
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+
+
+# This is an auto-generated Django model module.
+# You'll have to do the following manually to clean this up:
+#   * Rearrange models' order
+#   * Make sure each model has one field with primary_key=True
+#   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
+#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
+# Feel free to rename the models, but don't rename db_table values or field names.
+from django.db import models
+
 
 
 class Bairro(models.Model):
     id_bairro = models.AutoField(db_column='ID_BAIRRO', primary_key=True)  # Field name made lowercase.
-    nome_bairro = models.CharField(db_column='NOME_BAIRRO', max_length=50)  # Field name made lowercase.
+    nome_bairro = models.CharField(db_column='NOME_BAIRRO', max_length=50, unique=True)  # Field name made lowercase.
     cidade = models.CharField(max_length=50)
     uf = models.CharField(max_length=2)
     taxa = models.FloatField(blank=True, null=True)
 
     class Meta:
+        managed = True
         db_table = 'TB_BAIRRO'
 
 
@@ -19,6 +37,7 @@ class Categoria(models.Model):
     ativo = models.BooleanField()
 
     class Meta:
+        managed = True
         db_table = 'TB_CATEGORIA'
 
 
@@ -28,6 +47,7 @@ class Cliente(models.Model):
     telefone = models.CharField(max_length=11, blank=True, null=True)
 
     class Meta:
+        managed = True
         db_table = 'TB_CLIENTE'
 
 
@@ -40,6 +60,7 @@ class Endereco(models.Model):
     cliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='cliente')
 
     class Meta:
+        managed = True
         db_table = 'TB_ENDERECO'
 
 
@@ -48,6 +69,7 @@ class Funcionario(models.Model):
     cargo = models.CharField(max_length=255)
 
     class Meta:
+        managed = True
         db_table = 'TB_FUNCIONARIO'
 
 
@@ -57,16 +79,8 @@ class Ingrediente(models.Model):
     quantidade = models.IntegerField()
 
     class Meta:
+        managed = True
         db_table = 'TB_INGREDIENTE'
-
-
-class IngredienteProduto(models.Model):
-    id_ingrediente_produto = models.AutoField(db_column='ID_INGREDIENTE_PRODUTO', primary_key=True)  # Field name made lowercase.
-    produto = models.ForeignKey('Produto', models.DO_NOTHING, db_column='produto', related_name='ingredientes')
-    ingrediente = models.ForeignKey(Ingrediente, models.DO_NOTHING, db_column='ingrediente', related_name='produtos')
-
-    class Meta:
-        db_table = 'TB_INGREDIENTE_PRODUTO'
 
 
 class ItemPedido(models.Model):
@@ -75,8 +89,11 @@ class ItemPedido(models.Model):
     pedido = models.ForeignKey('Pedido', models.DO_NOTHING, db_column='pedido', blank=True, null=True)
     quantidade = models.IntegerField()
     preco = models.FloatField()
+    confirmado = models.IntegerField(db_column='CONFIRMADO', blank=True, null=True)  # Field name made lowercase.
+
 
     class Meta:
+        managed = True
         db_table = 'TB_ITEM_PEDIDO'
 
 
@@ -92,8 +109,10 @@ class Pedido(models.Model):
     criado_em = models.DateTimeField()
     finalizado_em = models.DateTimeField(blank=True, null=True)
     funcionario = models.ForeignKey(Funcionario, models.DO_NOTHING, db_column='funcionario', blank=True, null=True)
-
+    tipo_pedido = models.CharField(db_column='TIPO_PEDIDO', max_length=10, blank=True, null=True)
+    
     class Meta:
+        managed = True
         db_table = 'TB_PEDIDO'
 
 
@@ -105,8 +124,10 @@ class Produto(models.Model):
     descricao = models.CharField(max_length=400, blank=True, null=True)
     ativo = models.BooleanField()
     categoria = models.ForeignKey(Categoria, models.DO_NOTHING, db_column='categoria', blank=True, null=True)
+    ingredientes = models.ManyToManyField(Ingrediente)
 
     class Meta:
+        managed = True
         db_table = 'TB_PRODUTO'
 
 
@@ -118,5 +139,5 @@ class Usuario(models.Model):
     tipo = models.CharField(max_length=255)
 
     class Meta:
+        managed = True
         db_table = 'TB_USUARIO'
-        
