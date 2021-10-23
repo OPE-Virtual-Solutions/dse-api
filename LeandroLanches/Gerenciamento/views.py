@@ -20,7 +20,7 @@ API V2
 """
 class BairroViewSet(viewsets.ModelViewSet):
     queryset = Bairro.objects.all()
-    print('teste',queryset)
+    # print('teste',queryset)
     serializer_class = BairroSerializer
 
     def create(self, request, *args, **kwargs):
@@ -94,6 +94,14 @@ class ProdutoViewSet(viewsets.ModelViewSet):
 class ItemPedidoViewSet(viewsets.ModelViewSet):
     queryset = ItemPedido.objects.all()
     serializer_class = ItemPedidoSerializer
+
+    def list(self, request):
+        userId = request.GET.get("user", 1)
+
+        itens_pedido = ItemPedido.objects.filter(usuario = userId, ativo = True)
+        serializer = ItemPedidoSerializer(itens_pedido, many = True)
+
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

@@ -27,7 +27,6 @@ class Bairro(models.Model):
     taxa = models.FloatField(blank=True, null=True)
 
     class Meta:
-        managed = True
         db_table = 'TB_BAIRRO'
 
 
@@ -36,8 +35,10 @@ class Categoria(models.Model):
     nome_categoria = models.CharField(db_column='NOME_CATEGORIA', max_length=50)  # Field name made lowercase.
     ativo = models.BooleanField()
 
+    def __str__(self):
+        return self.nome_categoria
+
     class Meta:
-        managed = True
         db_table = 'TB_CATEGORIA'
 
 
@@ -47,7 +48,6 @@ class Cliente(models.Model):
     telefone = models.CharField(max_length=11, blank=True, null=True)
 
     class Meta:
-        managed = True
         db_table = 'TB_CLIENTE'
 
 
@@ -60,7 +60,6 @@ class Endereco(models.Model):
     cliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='cliente')
 
     class Meta:
-        managed = True
         db_table = 'TB_ENDERECO'
 
 
@@ -69,7 +68,6 @@ class Funcionario(models.Model):
     cargo = models.CharField(max_length=255)
 
     class Meta:
-        managed = True
         db_table = 'TB_FUNCIONARIO'
 
 
@@ -79,7 +77,6 @@ class Ingrediente(models.Model):
     quantidade = models.IntegerField()
 
     class Meta:
-        managed = True
         db_table = 'TB_INGREDIENTE'
 
 
@@ -87,13 +84,12 @@ class ItemPedido(models.Model):
     id_item_pedido = models.AutoField(primary_key=True)
     produto = models.ForeignKey('Produto', models.DO_NOTHING, db_column='produto')
     pedido = models.ForeignKey('Pedido', models.DO_NOTHING, db_column='pedido', blank=True, null=True)
+    usuario = models.ForeignKey("Usuario", models.DO_NOTHING, db_column="usuario", blank = True, null = True)
     quantidade = models.IntegerField()
     preco = models.FloatField()
-    confirmado = models.IntegerField(db_column='CONFIRMADO', blank=True, null=True)  # Field name made lowercase.
-
+    ativo = models.BooleanField(default = True)  # Field name made lowercase.
 
     class Meta:
-        managed = True
         db_table = 'TB_ITEM_PEDIDO'
 
 
@@ -112,7 +108,6 @@ class Pedido(models.Model):
     tipo_pedido = models.CharField(db_column='TIPO_PEDIDO', max_length=10, blank=True, null=True)
     
     class Meta:
-        managed = True
         db_table = 'TB_PEDIDO'
 
 
@@ -126,8 +121,10 @@ class Produto(models.Model):
     categoria = models.ForeignKey(Categoria, models.DO_NOTHING, db_column='categoria', blank=True, null=True)
     ingredientes = models.ManyToManyField(Ingrediente)
 
+    def __str__(self):
+        return self.nome_produto
+
     class Meta:
-        managed = True
         db_table = 'TB_PRODUTO'
 
 
@@ -138,6 +135,8 @@ class Usuario(models.Model):
     senha = models.CharField(max_length=255, blank=True, null=True)
     tipo = models.CharField(max_length=255)
 
+    def __str__(self):
+        return f"{self.nome_usuario}#{self.id_usuario}"
+
     class Meta:
-        managed = True
         db_table = 'TB_USUARIO'
