@@ -123,7 +123,7 @@ class Produto(models.Model):
     preco = models.FloatField()
     descricao = models.CharField(max_length=400, blank=True, null=True)
     ativo = models.BooleanField()
-    categoria = models.ForeignKey(Categoria, models.DO_NOTHING, db_column='categoria', blank=True, null=True)
+    categoria = models.ForeignKey(Categoria, models.DO_NOTHING, db_column='categoria', related_name="ingredientes", blank=True, null=True)
     ingredientes = models.ManyToManyField(Ingrediente)
 
     class Meta:
