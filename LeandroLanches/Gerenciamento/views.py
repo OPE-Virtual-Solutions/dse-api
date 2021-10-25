@@ -20,7 +20,6 @@ API V2
 """
 class BairroViewSet(viewsets.ModelViewSet):
     queryset = Bairro.objects.all()
-    # print('teste',queryset)
     serializer_class = BairroSerializer
 
     def create(self, request, *args, **kwargs):
