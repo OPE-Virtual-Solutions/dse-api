@@ -120,6 +120,9 @@ class ItemPedidoViewSet(viewsets.ModelViewSet):
         item_pedido["preco"] = produto.preco
         item_pedido["ativo"] = True
 
+        if atual_item_pedido is not None:
+            item_pedido["quantidade"] += atual_item_pedido.quantidade
+
         serializer = CreateItemPedidoSerializer(data = item_pedido)
 
         serializer.is_valid(raise_exception = True)
