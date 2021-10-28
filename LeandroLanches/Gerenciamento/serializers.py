@@ -66,19 +66,13 @@ class FuncionarioSerializer(serializers.ModelSerializer):
             'cargo',
         )
 
+
 class ProdutoSerializer(serializers.ModelSerializer):
-    categoria = CategoriaSerializer()
     class Meta:
+        categoria = serializers.SlugRelatedField(many=False, read_only=True, slug_field='nome_categoria')
         model = Produto
-        fields = (
-            'id_produto', 
-            'nome_produto', 
-            'preco', 
-            'descricao', 
-            'ativo', 
-            'categoria', 
-            'ingredientes'
-        )
+        fields = ('id_produto', 'nome_produto', 'preco', 'descricao', 'ativo', 'categoria', 'ingredientes')
+        depth = 1 
 
 
 class ItemPedidoSerializer(serializers.ModelSerializer):
@@ -93,6 +87,20 @@ class ItemPedidoSerializer(serializers.ModelSerializer):
             'quantidade',
             'preco',
             'ativo',
+        )
+        # depth = 1
+
+class CreateItemPedidoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemPedido
+        fields = (
+            'id_item_pedido',
+            'produto',
+            'pedido',
+            'quantidade',
+            'usuario',
+            'ativo',
+            'preco'
         )
 
 
@@ -118,21 +126,8 @@ class PedidoSerializer(serializers.ModelSerializer):
 class IngredienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingrediente
-        fields = ('id_ingrediente', 'nome_ingrediente', 'quantidade',)
+        fields = ('id_ingrediente', 'nome_ingrediente', 'quantidade')
 
-    def to_representation(self, instance):
-        return {
-            "id_ingrediente": instance.ingrediente.id_ingrediente,
-            "nome": instance.ingrediente.nome_ingrediente,
-            "quantidade": instance.ingrediente.quantidade
-        }
-
-class ProdutoSerializer(serializers.ModelSerializer):
-    class Meta:
-        categoria = serializers.SlugRelatedField(many=False, read_only=True, slug_field='nome_categoria')
-        model = Produto
-        fields = ('id_produto', 'nome_produto', 'preco', 'descricao', 'ativo', 'categoria', 'ingredientes')
-        depth = 1 
 
 
 class UsuarioSerializer(serializers.ModelSerializer):

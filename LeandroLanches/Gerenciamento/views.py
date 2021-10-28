@@ -103,16 +103,45 @@ class ItemPedidoViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.initial_data['confirmado'] = 0
-        print(serializer)
-        if serializer.initial_data['pedido'] is not None:
-            serializer.initial_data['confirmado'] = 1
-        print(serializer.initial_data['confirmado'])
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        item_pedido = request.data
+
+        try:
+            atual_item_pedido = ItemPedido.objects.get(
+                usuario = item_pedido["usuario"],
+                produto = item_pedido["produto"]
+            )
+        except:
+            atual_item_pedido = None
+
+        produto = Produto.objects.get(
+            id_produto = item_pedido["produto"]
+        )
+
+        item_pedido["preco"] = produto.preco
+        item_pedido["ativo"] = True
+
+        serializer = CreateItemPedidoSerializer(data = item_pedido)
+
+        serializer.is_valid(raise_exception = True)
+
+        status_code = status.HTTP_200_OK
+
+        if atual_item_pedido is not None:
+            serializer.update(
+                atual_item_pedido,
+                serializer.validated_data
+            )
+        else:
+            status_code = status.HTTP_201_CREATED
+
+            serializer.create(
+                serializer.validated_data
+            )
+
+        return Response(
+            serializer.data,
+            status = status_code
+        )
 
 
 class PedidoViewSet(viewsets.ModelViewSet):
