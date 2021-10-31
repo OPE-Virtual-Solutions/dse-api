@@ -108,7 +108,8 @@ class ItemPedidoViewSet(viewsets.ModelViewSet):
         try:
             atual_item_pedido = ItemPedido.objects.get(
                 usuario = item_pedido["usuario"],
-                produto = item_pedido["produto"]
+                produto = item_pedido["produto"],
+                ativo = True
             )
         except:
             atual_item_pedido = None
@@ -150,6 +151,43 @@ class ItemPedidoViewSet(viewsets.ModelViewSet):
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
+
+    def list(self, request):
+        filtro_atendimento = request.GET.get("apenasAtendimento", False)
+
+        if filtro_atendimento:
+            pedidos = Pedido.objects.exclude(
+                status__in = ["finalizado", "cancelado"],
+            )
+            pedido_serializer = GetPedidoSerializer(pedidos, many = True)
+
+            return Response(pedido_serializer.data)
+
+        pedidos = Pedido.objects.all()
+        pedido_serializer = GetPedidoSerializer(pedidos, many = True)
+
+        return Response(pedido_serializer.data)
+            
+
+    def create(self, request):
+        id_usuario = request.data["usuario"]
+        pedido = request.data["pedido"]
+
+        pedido_serializer = PedidoSerializer(data = pedido)
+        pedido_serializer.is_valid(raise_exception = True)
+
+        pedido = pedido_serializer.create(pedido_serializer.validated_data)
+
+        ItemPedido.objects.filter(
+            usuario = id_usuario,
+            ativo = True
+        ).update(
+            ativo = False,
+            pedido = pedido.id_pedido
+        )
+        
+        return Response(pedido_serializer.data, status = status.HTTP_201_CREATED)
+
 
 
 class UsuarioViewSet(viewsets.ModelViewSet):
