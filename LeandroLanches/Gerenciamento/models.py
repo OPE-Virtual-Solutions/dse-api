@@ -83,7 +83,7 @@ class Ingrediente(models.Model):
 class ItemPedido(models.Model):
     id_item_pedido = models.AutoField(primary_key=True)
     produto = models.ForeignKey('Produto', models.DO_NOTHING, db_column='produto')
-    pedido = models.ForeignKey('Pedido', models.DO_NOTHING, db_column='pedido', blank=True, null=True)
+    pedido = models.ForeignKey('Pedido', models.DO_NOTHING, db_column='pedido', blank=True, null=True, related_name = "produtos")
     usuario = models.ForeignKey("Usuario", models.DO_NOTHING, db_column="usuario", blank = True, null = True)
     quantidade = models.IntegerField()
     preco = models.FloatField()
@@ -94,6 +94,19 @@ class ItemPedido(models.Model):
 
 
 class Pedido(models.Model):
+    STATUS_PEDIDO = [
+        ("aguardando", "Aguardando inicio do preparo"),
+        ("em_andamento", "Em andamento"),
+        ("pronto", "Pronto para despache"),
+        ("finalizado", "Finalizado"),
+        ("cancelado", "Cancelado")
+    ]
+
+    TIPOS_PEDIDO = [
+        ("pra_viagem", "Pra viagem"),
+        ("pra_consumir", "Pra consumir")
+    ]
+
     id_pedido = models.AutoField(db_column='ID_PEDIDO', primary_key=True)  # Field name made lowercase.
     codigo_pedido = models.CharField(max_length=8, blank=True, null=True)
     cliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='cliente', blank=True, null=True)
@@ -101,11 +114,12 @@ class Pedido(models.Model):
     atendimento_presencial = models.BooleanField()
     valor_total = models.FloatField(blank=True, null=True)
     metodo_pagamento = models.CharField(max_length=255)
-    status = models.CharField(max_length=255)
+    status = models.CharField(max_length=255, choices = STATUS_PEDIDO)
     criado_em = models.DateTimeField()
+    observacao = models.CharField(max_length = 280, null = True, blank = True)
     finalizado_em = models.DateTimeField(blank=True, null=True)
     funcionario = models.ForeignKey(Funcionario, models.DO_NOTHING, db_column='funcionario', blank=True, null=True)
-    tipo_pedido = models.CharField(db_column='TIPO_PEDIDO', max_length=10, blank=True, null=True)
+    tipo_pedido = models.CharField(db_column='TIPO_PEDIDO', choices = TIPOS_PEDIDO, max_length=30, blank=True, null=True)
     
     class Meta:
         db_table = 'TB_PEDIDO'
@@ -119,10 +133,7 @@ class Produto(models.Model):
     descricao = models.CharField(max_length=400, blank=True, null=True)
     ativo = models.BooleanField()
     categoria = models.ForeignKey(Categoria, models.DO_NOTHING, db_column='categoria', related_name="ingredientes", blank=True, null=True)
-    ingredientes = models.ManyToManyField(Ingrediente)
-
-    def __str__(self):
-        return self.nome_produto
+    ingredientes = models.ManyToManyField(Ingrediente, blank = True)
 
     class Meta:
         db_table = 'TB_PRODUTO'
