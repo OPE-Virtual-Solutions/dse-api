@@ -104,6 +104,27 @@ class CreateItemPedidoSerializer(serializers.ModelSerializer):
         )
 
 
+class GetPedidoSerializer(serializers.ModelSerializer):
+    produtos = ItemPedidoSerializer(many  = True)
+
+    class Meta:
+        model = Pedido
+        fields = (
+            'id_pedido',
+            'codigo_pedido',
+            'cliente',
+            'endereco',
+            'atendimento_presencial',
+            'valor_total',
+            'metodo_pagamento',
+            'status',
+            'criado_em',
+            'tipo_pedido',
+            'finalizado_em',
+            'funcionario',
+            'produtos'
+        )
+
 class PedidoSerializer(serializers.ModelSerializer):
   
     class Meta:
@@ -118,6 +139,7 @@ class PedidoSerializer(serializers.ModelSerializer):
             'metodo_pagamento',
             'status',
             'criado_em',
+            'tipo_pedido',
             'finalizado_em',
             'funcionario',
         )
