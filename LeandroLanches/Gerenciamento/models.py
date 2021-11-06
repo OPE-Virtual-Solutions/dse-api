@@ -117,6 +117,7 @@ class Pedido(models.Model):
     status = models.CharField(max_length=255, choices = STATUS_PEDIDO)
     criado_em = models.DateTimeField()
     observacao = models.CharField(max_length = 280, null = True, blank = True)
+    motivo_cancelamento = models.CharField(max_length = 280, null = True, blank = True)
     finalizado_em = models.DateTimeField(blank=True, null=True)
     funcionario = models.ForeignKey(Funcionario, models.DO_NOTHING, db_column='funcionario', blank=True, null=True)
     tipo_pedido = models.CharField(db_column='TIPO_PEDIDO', choices = TIPOS_PEDIDO, max_length=30, blank=True, null=True)
@@ -132,6 +133,7 @@ class Produto(models.Model):
     preco = models.FloatField()
     descricao = models.CharField(max_length=400, blank=True, null=True)
     ativo = models.BooleanField()
+    quantidade = models.IntegerField(default = 0)
     categoria = models.ForeignKey(Categoria, models.DO_NOTHING, db_column='categoria', related_name="ingredientes", blank=True, null=True)
     ingredientes = models.ManyToManyField(Ingrediente, blank = True)
 
@@ -145,9 +147,6 @@ class Usuario(models.Model):
     email = models.CharField(max_length=255, blank=True, null=True)
     senha = models.CharField(max_length=255, blank=True, null=True)
     tipo = models.CharField(max_length=255)
-
-    def __str__(self):
-        return f"{self.nome_usuario}#{self.id_usuario}"
 
     class Meta:
         db_table = 'TB_USUARIO'
