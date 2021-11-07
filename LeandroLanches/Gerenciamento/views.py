@@ -15,6 +15,7 @@ from knox.views import LoginView as KnoxLoginView
 from rest_framework.authtoken.serializers import AuthTokenSerializer
 from django.contrib.auth import login
 
+from rest_framework.pagination import PageNumberPagination
 """
 API V2
 """
@@ -209,12 +210,27 @@ class UsuarioViewSet(viewsets.ModelViewSet):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
 
-'''class GrupoViewSet(viewsets.ModelViewSet):
-    permission_classes = (  GrupoAdmin,
-                            permissions.DjangoModelPermissions,)
-    queryset = AuthGroup.objects.all()
-    serializer_class = GrupoSerializer
-'''
+    def list(self, request):
+        tipos = ["cliente", "funcionario"]
+
+        filtro_tipo = request.GET.get("tipo", None)
+        if filtro_tipo != None and filtro_tipo not in tipos:
+            return Response(status = status.HTTP_400_BAD_REQUEST)
+
+        if filtro_tipo:
+            usuarios = Usuario.objects.filter(
+                tipo = filtro_tipo
+            )
+        else:
+            usuarios = Usuario.objects.all()
+                
+        usuario_serializer = UsuarioSerializer(usuarios, many = True)
+        
+        pagination = PageNumberPagination()
+        pagination.paginate_queryset(queryset = usuarios, request = request)
+        pagination_response = pagination.get_paginated_response(usuario_serializer.data)
+
+        return pagination_response
 
 
 class RegistrarViewSet(viewsets.ModelViewSet):
