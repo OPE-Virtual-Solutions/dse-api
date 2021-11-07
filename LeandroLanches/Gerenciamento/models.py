@@ -64,8 +64,14 @@ class Endereco(models.Model):
 
 
 class Funcionario(models.Model):
+    CARGO_FUNCIONARIO = [
+        ("admin", "Administrador do sistema"),
+        ("atendente", "Atendente"),
+        ("estoquista", "Estoquista"),
+    ]
+
     id_funcionario = models.OneToOneField('Usuario', models.DO_NOTHING, db_column='id_funcionario', primary_key=True)
-    cargo = models.CharField(max_length=255)
+    cargo = models.CharField(max_length=255, choices = CARGO_FUNCIONARIO, default = "atendente")
 
     class Meta:
         db_table = 'TB_FUNCIONARIO'
