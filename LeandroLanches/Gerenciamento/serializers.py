@@ -153,6 +153,17 @@ class IngredienteSerializer(serializers.ModelSerializer):
         fields = ('id_ingrediente', 'nome_ingrediente', 'quantidade')
 
 
+class CreateUsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuario
+        fields = (
+            'id_usuario',
+            'nome_usuario',
+            'email',
+            'senha',
+            'tipo',
+        )
+
 class UsuarioSerializer(serializers.ModelSerializer):
     funcionario = FuncionarioSerializer(many = False)
     cliente = ClienteSerializer(many = False)
@@ -166,7 +177,8 @@ class UsuarioSerializer(serializers.ModelSerializer):
             'senha',
             'tipo',
             "cliente",
-            "funcionario"
+            "funcionario",
+            "primeiro_acesso"
         )
 
 
