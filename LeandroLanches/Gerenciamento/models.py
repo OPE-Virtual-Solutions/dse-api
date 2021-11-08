@@ -153,6 +153,7 @@ class Usuario(models.Model):
     email = models.CharField(max_length=255, blank=True, null=True)
     senha = models.CharField(max_length=255, blank=True, null=True)
     tipo = models.CharField(max_length=255)
+    primeiro_acesso = models.BooleanField(default = False)
 
     class Meta:
         db_table = 'TB_USUARIO'
