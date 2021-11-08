@@ -232,6 +232,34 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 
         return pagination_response
 
+    def partial_update(self, request, pk = 0):
+        usuario = Usuario.objects.get(id_usuario = pk)
+        
+        if "senha" in request.data:
+            django_user = User.objects.get(
+                email = usuario.email
+            )
+
+            django_user.set_password(request.data["senha"])
+
+        serializer = UsuarioSerializer(
+            instance = usuario,
+            data = request.data,
+            partial = True
+        )
+
+        serializer.is_valid(raise_exception = True)
+
+        serializer.save()
+        django_user.save()
+
+        return Response(
+            serializer.data
+        )
+
+
+        
+
 
 class RegistrarViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
@@ -256,7 +284,7 @@ class RegisterAPI(generics.GenericAPIView):
         if request.data["tipo"] not in user_types:
             return Response(status = status.HTTP_400_BAD_REQUEST)
 
-        usuario_serializer = UsuarioSerializer(
+        usuario_serializer = CreateUsuarioSerializer(
             data = request.data
         )
 
