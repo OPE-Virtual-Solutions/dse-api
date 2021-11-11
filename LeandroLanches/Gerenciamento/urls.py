@@ -24,5 +24,5 @@ router.register('registrar-se', RegistrarViewSet)
 urlpatterns = [
     path('login/', LoginAPI.as_view(), name='login'),
     path('logout/', knox_views.LogoutView.as_view(), name='logout'),
-    path('api/register/', RegisterAPI.as_view(), name='register'),
+    path('register/', RegisterAPI.as_view(), name='register'),
 ]

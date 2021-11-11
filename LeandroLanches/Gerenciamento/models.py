@@ -20,123 +20,140 @@ from django.db import models
 
 
 class Bairro(models.Model):
-    id_bairro = models.AutoField(db_column='ID_BAIRRO', primary_key=True)  # Field name made lowercase.
-    nome_bairro = models.CharField(db_column='NOME_BAIRRO', max_length=50, unique=True)  # Field name made lowercase.
-    cidade = models.CharField(max_length=50)
-    uf = models.CharField(max_length=2)
-    taxa = models.FloatField(blank=True, null=True)
+    id = models.AutoField(db_column='id_bairro', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='nome_bairro', max_length=50, unique=True)  # Field name made lowercase.
+    city = models.CharField(db_column="cidade", max_length=50)
+    state = models.CharField(db_column="uf", max_length=2)
+    tax = models.FloatField(db_column="taxa", blank=True, null=True)
 
     class Meta:
         db_table = 'TB_BAIRRO'
 
 
 class Categoria(models.Model):
-    id_categoria = models.AutoField(db_column='ID_CATEGORIA', primary_key=True)  # Field name made lowercase.
-    nome_categoria = models.CharField(db_column='NOME_CATEGORIA', max_length=50)  # Field name made lowercase.
-    ativo = models.BooleanField()
+    id = models.AutoField(db_column='id_categoria', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='nome_categoria', max_length=50)  # Field name made lowercase.
+    active = models.BooleanField(db_column="ativo", default = False)
 
     def __str__(self):
-        return self.nome_categoria
+        return self.name
 
     class Meta:
         db_table = 'TB_CATEGORIA'
 
 
 class Cliente(models.Model):
-    id_cliente = models.OneToOneField('Usuario', models.DO_NOTHING, db_column='id_cliente', primary_key=True)
-    nome_cliente = models.CharField(db_column='NOME_CLIENTE', max_length=50)  # Field name made lowercase.
-    telefone = models.CharField(max_length=11, blank=True, null=True)
+    id = models.OneToOneField('Usuario', models.DO_NOTHING, db_column='id_cliente', primary_key=True)
+    fullName = models.CharField(db_column='nome_cliente', max_length=50)  # Field name made lowercase.
+    phone = models.CharField(db_column="telefone", max_length=11, blank=True, null=True)
 
     class Meta:
         db_table = 'TB_CLIENTE'
 
 
 class Endereco(models.Model):
-    id_endereco = models.AutoField(primary_key=True)
-    cep = models.CharField(max_length=8)
-    logradouro = models.CharField(max_length=50)
-    numero = models.IntegerField(blank=True, null=True)
-    bairro = models.ForeignKey(Bairro, models.DO_NOTHING, db_column='bairro', blank=True, null=True)
-    cliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='cliente')
+    id = models.AutoField(primary_key=True)
+    zipCode = models.CharField(db_column="cep", max_length=8)
+    street = models.CharField(db_column="logradouro", max_length=50)
+    number = models.IntegerField(db_column="numero", blank=True, null=True)
+    district = models.ForeignKey(Bairro, models.DO_NOTHING, db_column='bairro', blank=True, null=True)
+    costumer = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='cliente')
 
     class Meta:
         db_table = 'TB_ENDERECO'
 
 
 class Funcionario(models.Model):
-    id_funcionario = models.OneToOneField('Usuario', models.DO_NOTHING, db_column='id_funcionario', primary_key=True)
-    cargo = models.CharField(max_length=255)
+    CARGO_FUNCIONARIO = [
+        ("admin", "Administrador do sistema"),
+        ("atendente", "Atendente"),
+        ("estoquista", "Estoquista"),
+    ]
+
+    id = models.OneToOneField('Usuario', models.DO_NOTHING, db_column='id_funcionario', primary_key=True)
+    role = models.CharField(max_length=255, db_column='cargo', choices = CARGO_FUNCIONARIO, default = "atendente")
 
     class Meta:
         db_table = 'TB_FUNCIONARIO'
 
 
 class Ingrediente(models.Model):
-    id_ingrediente = models.AutoField(db_column='ID_INGREDIENTE', primary_key=True)  # Field name made lowercase.
-    nome_ingrediente = models.CharField(db_column='NOME_INGREDIENTE', max_length=50)  # Field name made lowercase.
-    quantidade = models.IntegerField()
+    id = models.AutoField(db_column='id_ingrediente', primary_key=True)  # Field name made lowercase.
+    name = models.CharField(db_column='nome_ingrediente', max_length=50)  # Field name made lowercase.
+    quantity = models.IntegerField(db_column = "quantidade")
 
     class Meta:
         db_table = 'TB_INGREDIENTE'
 
 
 class ItemPedido(models.Model):
-    id_item_pedido = models.AutoField(primary_key=True)
-    produto = models.ForeignKey('Produto', models.DO_NOTHING, db_column='produto')
-    pedido = models.ForeignKey('Pedido', models.DO_NOTHING, db_column='pedido', blank=True, null=True)
-    usuario = models.ForeignKey("Usuario", models.DO_NOTHING, db_column="usuario", blank = True, null = True)
-    quantidade = models.IntegerField()
-    preco = models.FloatField()
-    ativo = models.BooleanField(default = True)  # Field name made lowercase.
+    id = models.AutoField(primary_key=True, db_column="id_item_pedido")
+    product = models.ForeignKey('Produto', models.DO_NOTHING, db_column='produto')
+    order = models.ForeignKey('Pedido', models.DO_NOTHING, db_column='pedido', blank=True, null=True, related_name = "products")
+    user = models.ForeignKey("Usuario", models.DO_NOTHING, db_column="usuario", blank = True, null = True)
+    quantity = models.IntegerField(db_column="quantidade")
+    price = models.FloatField(db_column="preco")
+    active = models.BooleanField(default = True, db_column="ativo")  # Field name made lowercase.
 
     class Meta:
         db_table = 'TB_ITEM_PEDIDO'
 
 
 class Pedido(models.Model):
-    id_pedido = models.AutoField(db_column='ID_PEDIDO', primary_key=True)  # Field name made lowercase.
-    codigo_pedido = models.CharField(max_length=8, blank=True, null=True)
-    cliente = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='cliente', blank=True, null=True)
-    endereco = models.ForeignKey(Endereco, models.DO_NOTHING, db_column='endereco', blank=True, null=True)
-    atendimento_presencial = models.BooleanField()
-    valor_total = models.FloatField(blank=True, null=True)
-    metodo_pagamento = models.CharField(max_length=255)
-    status = models.CharField(max_length=255)
-    criado_em = models.DateTimeField()
-    finalizado_em = models.DateTimeField(blank=True, null=True)
-    funcionario = models.ForeignKey(Funcionario, models.DO_NOTHING, db_column='funcionario', blank=True, null=True)
-    tipo_pedido = models.CharField(db_column='TIPO_PEDIDO', max_length=10, blank=True, null=True)
+    STATUS_PEDIDO = [
+        ("aguardando", "Aguardando inicio do preparo"),
+        ("em_andamento", "Em andamento"),
+        ("pronto", "Pronto para despache"),
+        ("finalizado", "Finalizado"),
+        ("cancelado", "Cancelado")
+    ]
+
+    TIPOS_PEDIDO = [
+        ("pra_viagem", "Pra viagem"),
+        ("pra_consumir", "Pra consumir")
+    ]
+
+    id = models.AutoField(db_column='ID_PEDIDO', primary_key=True)  # Field name made lowercase.
+    orderCode = models.CharField(max_length=8, blank=True, null=True)
+    costumer = models.ForeignKey(Cliente, models.DO_NOTHING, db_column='cliente', blank=True, null=True)
+    address = models.ForeignKey(Endereco, models.DO_NOTHING, db_column='endereco', blank=True, null=True)
+    isLocalOrder = models.BooleanField(db_column="atendimento_presencial")
+    totalPrice = models.FloatField(db_column="valor_total", blank=True, null=True)
+    paymentMethod = models.CharField(db_column="metodo_pagamento", max_length=255)
+    status = models.CharField(max_length=255, choices = STATUS_PEDIDO)
+    createdAt = models.DateTimeField(db_column = "criado_em")
+    note = models.CharField(db_column = "observacao", max_length = 280, null = True, blank = True)
+    cancelNote = models.CharField(db_column = "motivo_cancelamento", max_length = 280, null = True, blank = True)
+    finishedAt = models.DateTimeField(db_column = "finalizado_em", blank=True, null=True)
+    employee = models.ForeignKey(Funcionario, models.DO_NOTHING, db_column='funcionario', blank=True, null=True)
+    type = models.CharField(db_column='tipo_pedido', choices = TIPOS_PEDIDO, max_length=30, blank=True, null=True)
     
     class Meta:
         db_table = 'TB_PEDIDO'
 
 
 class Produto(models.Model):
-    id_produto = models.AutoField(db_column='ID_PRODUTO', primary_key=True)  # Field name made lowercase.
+    id = models.AutoField(db_column='id_produto', primary_key=True)  # Field name made lowercase.
     # id = models.IntegerField()
-    nome_produto = models.CharField(max_length=100)
-    preco = models.FloatField()
-    descricao = models.CharField(max_length=400, blank=True, null=True)
-    ativo = models.BooleanField()
-    categoria = models.ForeignKey(Categoria, models.DO_NOTHING, db_column='categoria', blank=True, null=True)
-    ingredientes = models.ManyToManyField(Ingrediente)
-
-    def __str__(self):
-        return self.nome_produto
+    name = models.CharField(db_column="nome_produto", max_length=100)
+    price = models.FloatField(db_column="preco")
+    description = models.CharField(db_column="descricao", max_length=400, blank=True, null=True)
+    active = models.BooleanField(db_column="ativo")
+    quantity = models.IntegerField(db_column="quantidade", default = 0)
+    category = models.ForeignKey(Categoria, models.DO_NOTHING, db_column='categoria', related_name="ingredients", blank=True, null=True)
+    ingredients = models.ManyToManyField(Ingrediente, blank = True)
 
     class Meta:
         db_table = 'TB_PRODUTO'
 
 
 class Usuario(models.Model):
-    id_usuario = models.AutoField(primary_key=True)
-    nome_usuario = models.CharField(max_length=50)
-    email = models.CharField(max_length=255, blank=True, null=True)
-    senha = models.CharField(max_length=255, blank=True, null=True)
-    tipo = models.CharField(max_length=255)
-
-    def __str__(self):
-        return f"{self.nome_usuario}#{self.id_usuario}"
+    id = models.AutoField(db_column="id_usuario", primary_key=True)
+    fullName = models.CharField(db_column="nome_completo", max_length=50)
+    email = models.CharField(db_column="email", max_length=255, blank=True, null=True)
+    password = models.CharField(db_column="senha", max_length=255, blank=True, null=True)
+    type = models.CharField(db_column="tipo", max_length=255)
+    firstAccess = models.BooleanField(db_column="primero_acesso", default = True)
 
     class Meta:
         db_table = 'TB_USUARIO'

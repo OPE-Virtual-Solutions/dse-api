@@ -14,11 +14,11 @@ class BairroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bairro
         fields = (
-            'id_bairro',
-            'nome_bairro',
-            'cidade',
-            'uf',
-            'taxa',
+            'id',
+            'name',
+            'city',
+            'state',
+            'tax',
         )
 
 class CategoriaSerializer(serializers.ModelSerializer):
@@ -26,9 +26,9 @@ class CategoriaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Categoria
         fields = (
-            'id_categoria',
-            'nome_categoria',
-            'ativo',
+            'id',
+            'name',
+            'active',
         )
 
 
@@ -37,9 +37,9 @@ class ClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cliente
         fields = (
-            'id_cliente',
-            'nome_cliente',
-            'telefone',
+            'id',
+            'fullName',
+            'phone',
         )
 
 
@@ -48,12 +48,12 @@ class EnderecoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Endereco
         fields = (
-            'id_endereco',
-            'cep',
-            'logradouro',
-            'numero',
-            'bairro',
-            'cliente',
+            'id',
+            'zipCode',
+            'street',
+            'number',
+            'district',
+            'costumer',
         )
 
 
@@ -62,82 +62,137 @@ class FuncionarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Funcionario
         fields = (
-            'id_funcionario',
-            'cargo',
+            'id',
+            'role',
         )
 
+
 class ProdutoSerializer(serializers.ModelSerializer):
-    categoria = CategoriaSerializer()
     class Meta:
+        category = serializers.SlugRelatedField(many=False, read_only=True, slug_field='nome_categoria')
         model = Produto
         fields = (
-            'id_produto', 
-            'nome_produto', 
-            'preco', 
-            'descricao', 
-            'ativo', 
-            'categoria', 
-            'ingredientes'
+            "id",
+            "name",
+            "price",
+            "description",
+            "active",
+            "quantity",
+            "category",
+            "ingredients"
         )
+        depth = 1 
 
 
 class ItemPedidoSerializer(serializers.ModelSerializer):
-    produto = ProdutoSerializer(many = False)
+    product = ProdutoSerializer(many = False)
 
     class Meta:
         model = ItemPedido
         fields = (
-            'id_item_pedido',
-            'produto',
-            'pedido',
-            'quantidade',
-            'preco',
-            'ativo',
+            'id',
+            'product',
+            'order',
+            'quantity',
+            'price',
+            'active',
+        )
+        # depth = 1
+
+class CreateItemPedidoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ItemPedido
+        fields = (
+            'id',
+            'product',
+            'order',
+            'quantity',
+            'user',
+            'active',
+            'price'
         )
 
+
+class GetPedidoSerializer(serializers.ModelSerializer):
+    products = ItemPedidoSerializer(many  = True)
+
+    class Meta:
+        model = Pedido
+        fields = (
+            'id',
+            'orderCode',
+            'costumer',
+            'address',
+            'isLocalOrder',
+            'totalPrice',
+            'paymentMethod',
+            'status',
+            'createdAt',
+            'type',
+            "note",
+            "cancelNote",
+            "finishedAt",
+            'employee',
+            'products'
+        )
 
 class PedidoSerializer(serializers.ModelSerializer):
   
     class Meta:
         model = Pedido
         fields = (
-            'id_pedido',
-            'codigo_pedido',
-            'cliente',
-            'endereco',
-            'atendimento_presencial',
-            'valor_total',
-            'metodo_pagamento',
+            'id',
+            'orderCode',
+            'costumer',
+            'address',
+            'isLocalOrder',
+            'totalPrice',
+            'paymentMethod',
             'status',
-            'criado_em',
-            'finalizado_em',
-            'funcionario',
+            'createdAt',
+            'type',
+            'finishedAt',
+            "note",
+            'employee',
         )
 
 
 class IngredienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingrediente
-        fields = ('id_ingrediente', 'nome_ingrediente', 'quantidade',)
-
-    def to_representation(self, instance):
-        return {
-            "id_ingrediente": instance.ingrediente.id_ingrediente,
-            "nome": instance.ingrediente.nome_ingrediente,
-            "quantidade": instance.ingrediente.quantidade
-        }
+        fields = (
+            "id",
+            "name",
+            "quantity"
+        )
 
 
-
-class UsuarioSerializer(serializers.ModelSerializer):
+class CreateUsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = (
-            'id_usuario',
-            'nome_usuario',
+            'id',
+            'fullName',
             'email',
-            'senha',
-            'tipo',
+            'password',
+            'type',
+        )
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    employee = FuncionarioSerializer(many = False, source = "funcionario")
+    costumer = ClienteSerializer(many = False, source = "cliente")
+
+    class Meta:
+        model = Usuario
+        fields = (
+            'id',
+            'fullName',
+            'email',
+            'password',
+            'type',
+            "costumer",
+            "employee",
+            "firstAccess"
         )
 
 

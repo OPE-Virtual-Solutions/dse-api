@@ -5,117 +5,117 @@ from .models import *
 @admin.register(Bairro)
 class BairroAdmin(admin.ModelAdmin):
     list_display = (
-        'id_bairro',
-        'nome_bairro', 
-        'cidade', 
-        'uf', 
-        'taxa'
+        'id',
+        'name', 
+        'city', 
+        'state', 
+        'tax'
     )
-    list_display_links = ["id_bairro"]
+    list_display_links = ["id"]
 
 
 @admin.register(Cliente)
 class ClienteAdmin(admin.ModelAdmin):
     list_display = (
-        'id_cliente',
-        'nome_cliente', 
-        'telefone'
+        'id',
+        'fullName', 
+        'phone'
     )
-    list_display_links = ["id_cliente"]
+    list_display_links = ["id"]
 
 
 @admin.register(Funcionario)
 class FuncionarioAdmin(admin.ModelAdmin):
     list_display = (
-        'id_funcionario',
-        'cargo',
+        'id',
+        'role',
     )
-    list_display_links = ["id_funcionario"]
+    list_display_links = ["id"]
 
 
 @admin.register(Endereco)
 class EnderecoAdmin(admin.ModelAdmin):
     list_display = (
-        'id_endereco',
-        'cep',
-        'logradouro', 
-        'numero', 
-        'bairro', 
-        'cliente'
+        'id',
+        'zipCode',
+        'street', 
+        'number', 
+        'district', 
+        'costumer'
     )
-    list_display_links = ["id_endereco"]
+    list_display_links = ["id"]
 
 
 @admin.register(Ingrediente)
 class IngredienteAdmin(admin.ModelAdmin):
     list_display = (
-        'id_ingrediente',
-        'nome_ingrediente',
-        'quantidade'
+        'id',
+        'name',
+        'quantity'
     )
-    list_display_links = ["id_ingrediente"]
+    list_display_links = ["id"]
 
 
 @admin.register(ItemPedido)
 class ItemPedidoAmin(admin.ModelAdmin):
     list_display = (
-        "id_item_pedido", 
-        'produto', 
-        'pedido',
-        'quantidade', 
-        'preco', 
-        "ativo"
+        "id", 
+        'product', 
+        'order',
+        'quantity', 
+        'price', 
+        "active"
     )
-    list_display_links = ["id_item_pedido"]
+    list_display_links = ["id"]
 
 
 @admin.register(Pedido)
 class PedidoAdmin(admin.ModelAdmin):
     list_display = (
-        'id_pedido',
-        'cliente', 
-        'endereco', 
-        'atendimento_presencial', 
-        'valor_total',
-        'metodo_pagamento', 
+        'id',
+        'costumer', 
+        'address', 
+        'isLocalOrder', 
+        'totalPrice',
+        'paymentMethod', 
         'status',
-        'criado_em',
-        'finalizado_em',
-        'funcionario'
+        'createdAt',
+        'finishedAt',
+        'employee'
     )
-    list_display_links = ["id_pedido"]
+    list_display_links = ["id"]
 
 
 @admin.register(Produto)
 class ProdutoAdmin(admin.ModelAdmin):
     list_display = (
-        'id_produto',
-        'nome_produto',
-        'preco', 
-        'descricao', 
-        'ativo',
-        'categoria'
+        'id',
+        'name',
+        'price', 
+        'description', 
+        'active',
+        'category'
     )
-    list_display_links = ["id_produto"]
+    list_display_links = ["id"]
 
 
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):
     list_display = (
-        'id_usuario',
-        'nome_usuario',
+        'id',
+        'fullName',
         'email', 
-        'senha', 
-        'tipo'
+        'password', 
+        'type'
     )
-    list_display_links = ["id_usuario"]
+    list_display_links = ["id"]
 
 
 @admin.register(Categoria)
 class CategoriaAdmin(admin.ModelAdmin):
     list_display = (
-        'id_categoria',
-        'nome_categoria',
-        'ativo'
+        'id',
+        'name',
+        'active'
     )   
-    list_display_links = ["id_categoria"]
+    list_display_links = ["id"]
