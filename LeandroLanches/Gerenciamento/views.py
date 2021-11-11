@@ -25,8 +25,8 @@ class BairroViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        cidade = serializer.initial_data['cidade']
-        bairro = serializer.initial_data['nome_bairro']
+        cidade = serializer.initial_data['city']
+        bairro = serializer.initial_data['name']
         lista_cidade = ['Barueri']
         lista_bairros = ['Jd Isaura', 'Pq Santana']
         # print("oiiii",Bairro.objects.filter(nome_bairro=bairro).exists())
@@ -72,30 +72,30 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         data = request.data
 
-        produto = Produto.objects.filter(nome_produto__icontains = data["nome_produto"])
+        produto = Produto.objects.filter(name__icontains = data["name"])
         if produto:
             return Response({}, status = status.HTTP_409_CONFLICT)
 
-        categoria = Categoria.objects.get(id_categoria = data["categoria"])
+        categoria = Categoria.objects.get(id = data["category"])
         if not categoria:
             return Response({}, status = status.HTTP_404_NOT_FOUND)
 
         novo_produto = Produto.objects.create(
-            nome_produto = data["nome_produto"],
-            preco = data["preco"],
-            descricao = data["descricao"],
-            ativo = data["ativo"],
-            quantidade = data["quantidade"],
-            categoria = categoria
+            name = data["name"],
+            price = data["price"],
+            description = data["description"],
+            active = data["active"],
+            quantity = data["quantity"],
+            category = categoria
         )
     
         novo_produto.save()
 
-        for ingrediente in data["ingredientes"]:
-            ingrediente_obj = Ingrediente.objects.get(id_ingrediente = ingrediente["id_ingrediente"])
+        for ingrediente in data["ingredients"]:
+            ingrediente_obj = Ingrediente.objects.get(id = ingrediente["id"])
 
             if ingrediente_obj:
-                novo_produto.ingredientes.add(ingrediente_obj)
+                novo_produto.ingredients.add(ingrediente_obj)
         
         serializer = ProdutoSerializer(novo_produto)
 
@@ -111,32 +111,33 @@ class ItemPedidoViewSet(viewsets.ModelViewSet):
         if userId is None:
             return Response(status = status.HTTP_404_NOT_FOUND)
 
-        itens_pedido = ItemPedido.objects.filter(usuario = userId, ativo = True)
+        itens_pedido = ItemPedido.objects.filter(user = userId, active = True)
         serializer = ItemPedidoSerializer(itens_pedido, many = True)
 
         return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         item_pedido = request.data
+        print("~ quantity received:", item_pedido["quantity"])
 
         try:
             atual_item_pedido = ItemPedido.objects.get(
-                usuario = item_pedido["usuario"],
-                produto = item_pedido["produto"],
-                ativo = True
+                user = item_pedido["user"],
+                product = item_pedido["product"],
+                active = True
             )
         except:
             atual_item_pedido = None
 
         produto = Produto.objects.get(
-            id_produto = item_pedido["produto"]
+            id = item_pedido["product"]
         )
 
-        item_pedido["preco"] = produto.preco
-        item_pedido["ativo"] = True
+        item_pedido["price"] = produto.price
+        item_pedido["active"] = True
 
         if atual_item_pedido is not None:
-            item_pedido["quantidade"] += atual_item_pedido.quantidade
+            item_pedido["quantity"] += atual_item_pedido.quantity
 
         serializer = CreateItemPedidoSerializer(data = item_pedido)
 
@@ -178,7 +179,7 @@ class PedidoViewSet(viewsets.ModelViewSet):
             return Response(pedido_serializer.data)
 
         pedidos = Pedido.objects.all().order_by(
-            "-criado_em"
+            "-createdAt"
         )
         pedido_serializer = GetPedidoSerializer(pedidos, many = True)
 
@@ -186,8 +187,8 @@ class PedidoViewSet(viewsets.ModelViewSet):
             
 
     def create(self, request):
-        id_usuario = request.data["usuario"]
-        pedido = request.data["pedido"]
+        id_usuario = request.data["user"]
+        pedido = request.data["order"]
 
         pedido_serializer = PedidoSerializer(data = pedido)
         pedido_serializer.is_valid(raise_exception = True)
@@ -195,11 +196,11 @@ class PedidoViewSet(viewsets.ModelViewSet):
         pedido = pedido_serializer.create(pedido_serializer.validated_data)
 
         ItemPedido.objects.filter(
-            usuario = id_usuario,
-            ativo = True
+            user = id_usuario,
+            active = True
         ).update(
-            ativo = False,
-            pedido = pedido.id_pedido
+            active = False,
+            order = pedido.id
         )
         
         return Response(pedido_serializer.data, status = status.HTTP_201_CREATED)
@@ -219,7 +220,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 
         if filtro_tipo:
             usuarios = Usuario.objects.filter(
-                tipo = filtro_tipo
+                type = filtro_tipo
             )
         else:
             usuarios = Usuario.objects.all()
@@ -233,14 +234,51 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         return pagination_response
 
     def partial_update(self, request, pk = 0):
-        usuario = Usuario.objects.get(id_usuario = pk)
+        usuario = Usuario.objects.get(id = pk)
         
-        if "senha" in request.data:
+        funcionario_serializer = None
+        cliente_serializer = None
+        if usuario.type == "funcionario" and "role" in request.data:
+            funcionario = Funcionario.objects.get(id = pk)
+            funcionario.role = request.data["role"]
+
+            funcionario_serializer = FuncionarioSerializer(
+                instance = funcionario,
+                data = request.data,
+                partial = True
+            )
+            funcionario_serializer.is_valid()
+        elif usuario.type == "cliente" and "phone" in request.data:
+            cliente = Cliente.objects.get(id = pk)
+            cliente.phone = request.data["phone"]
+
+            cliente_serializer = ClienteSerializer(
+                instance = cliente,
+                data = request.data,
+                partial = True
+            )
+            cliente_serializer.is_valid()
+
+        email = request.data["email"] if "email" in request.data else None
+        
+        if "password" in request.data:
+            print("senha:", request.data["password"])
+            print("email:", usuario.email)
             django_user = User.objects.get(
-                email = usuario.email
+                username = usuario.email
             )
 
-            django_user.set_password(request.data["senha"])
+            django_user.set_password(request.data["password"])
+            
+
+        if email is not None:
+            print("~ pass [email]")
+            django_user = User.objects.get(
+                username = usuario.email
+            )
+
+            django_user.email = email
+            django_user.username = email
 
         serializer = UsuarioSerializer(
             instance = usuario,
@@ -250,8 +288,11 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 
         serializer.is_valid(raise_exception = True)
 
-        serializer.save()
         django_user.save()
+        serializer.save()
+        
+        if funcionario_serializer != None: funcionario_serializer.save()
+        if cliente_serializer != None: cliente_serializer.save()
 
         return Response(
             serializer.data
@@ -281,7 +322,7 @@ class RegisterAPI(generics.GenericAPIView):
     def post(self, request):
         user_types = ["funcionario", "cliente"]
 
-        if request.data["tipo"] not in user_types:
+        if request.data["type"] not in user_types:
             return Response(status = status.HTTP_400_BAD_REQUEST)
 
         usuario_serializer = CreateUsuarioSerializer(
@@ -295,31 +336,31 @@ class RegisterAPI(generics.GenericAPIView):
         django_user = User(
             username = usuario_serializer.data["email"],
             email = usuario_serializer.data["email"],
-            first_name = usuario_serializer.data["nome_usuario"],
+            first_name = usuario_serializer.data["fullName"],
             is_superuser = False
         )
 
-        django_user.set_password(usuario_serializer.data["senha"])
+        django_user.set_password(usuario_serializer.data["password"])
         django_user.validate_unique()
         
         usuario = usuario_serializer.create(usuario_serializer.validated_data)
 
-        if request.data["tipo"] == "funcionario":
+        if request.data["type"] == "funcionario":
             funcionario_serializer = FuncionarioSerializer(data =
                 {
-                    "id_funcionario": usuario.id_usuario,
-                    "cargo": request.data["cargo"]
+                    "id": usuario.id,
+                    "role": request.data["role"]
                 }
             )
 
             funcionario_serializer.is_valid()
             funcionario_serializer.save()
-        elif request.data["tipo"] == "cliente":
+        elif request.data["type"] == "cliente":
             cliente_serializer = ClienteSerializer(data =
                 {
-                    "id_cliente": usuario.id_usuario,
-                    "nome_cliente": usuario_serializer.data["nome_usuario"],
-                    "telefone": request.data["telefone"]
+                    "id": usuario.id,
+                    "fullName": usuario_serializer.data["fullName"],
+                    "phone": request.data["phone"]
                 }
             )
 
@@ -337,6 +378,8 @@ class LoginAPI(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format = None):
+        print("~ requestdata:", request.data)
+
         auth_serializer = AuthTokenSerializer(data = request.data)
         auth_serializer.is_valid(raise_exception = True)
 
@@ -345,18 +388,17 @@ class LoginAPI(KnoxLoginView):
         user = Usuario.objects.get(email = django_user)
         user_serializer = UsuarioSerializer(instance = user, many = False)
 
-
-        if user.tipo == "funcionario":
-            employee = Funcionario.objects.get(id_funcionario = user.id_usuario)
+        if user.type == "funcionario":
+            employee = Funcionario.objects.get(id = user.id)
 
             response = {
                 "user": {
                     **user_serializer.data,
-                    "cargo": employee.cargo
+                    "role": employee.role
                 }
             }
-        elif user.tipo == "cliente":
-            costumer = Cliente.objects.get(id_cliente = user.id_usuario)
+        elif user.type == "cliente":
+            costumer = Cliente.objects.get(id = user.id)
 
             response = {
                 "user": {
