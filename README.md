@@ -27,10 +27,10 @@
 
 3. Crie um arquivo chamado `.env` no diretório raíz do projeto e coloque dentro dele a seguinte configuração:
     ```
-    DATABASE_NAME=NOME_DO_BANCO_DE_DADOS
-    DATABASE_USER=NOME_DO_USUARIO_PARA_LOGIN
-    DATABASE_PASSWORD=NOME_DE_SENHA_PARA_LOGIN
-    DATABASE_HOST=localhost
+    DATABASE_NAME=LeandroLanches
+    DATABASE_USER=teste
+    DATABASE_PASSWORD=@Agua123
+    DATABASE_HOST=leandrolanches.database.windows.net
     DATABASE_PORT=1433
     ```
 
