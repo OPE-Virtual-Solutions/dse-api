@@ -60,14 +60,97 @@ class FuncionarioViewSet(viewsets.ModelViewSet):
     serializer_class = FuncionarioSerializer
 
 
+class IngredientPagination(PageNumberPagination):
+    page_size = 5  
+    max_page_size = 5# items per page
+
+
+class CustomPagination(PageNumberPagination):
+    page_size = 5
+
+
 class IngredienteViewSet(viewsets.ModelViewSet):
     serializer_class = IngredienteSerializer
     queryset = Ingrediente.objects.all()
+
+    def create(self, request):
+        data = request.data
+
+        ingrediente = Ingrediente.objects.filter(
+            name__iexact = data["name"]
+        )
+
+        if ingrediente:
+            return Response({}, status = status.HTTP_409_CONFLICT)
+
+        serializer = IngredienteSerializer(data = data)
+        serializer.is_valid(raise_exception = True)
+
+        serializer.create(serializer.validated_data)
+
+        return Response(
+            serializer.data
+        )
+
+
+    def list(self, request):
+        filter_name = request.GET.get("name", None)
+        filter_page = request.GET.get("paginated", "true")
+
+        if filter_name is not None:
+            ingredient_list = Ingrediente.objects.filter(
+                name__icontains = filter_name
+            )
+        else:
+            ingredient_list = Ingrediente.objects.all()
+        
+        if filter_page == "true":
+            pagination = CustomPagination()
+            paginated = pagination.paginate_queryset(queryset = ingredient_list, request = request)
+            
+            ingredient_serializer = IngredienteSerializer(paginated, many = True)
+            
+            pagination_response = pagination.get_paginated_response(ingredient_serializer.data)
+            
+            return pagination_response
+        else:
+            serializer = IngredienteSerializer(ingredient_list, many = True)
+            return Response(serializer.data)
+
+        
+        
+
+
 
 
 class ProdutoViewSet(viewsets.ModelViewSet):
     serializer_class = ProdutoSerializer
     queryset = Produto.objects.all()
+
+    def list(self, request):
+        filters = {}
+
+        for key, value in request.GET.items():
+            if value != '' or None:
+
+                if key == "name":
+                    filters[key + "__icontains"] = value
+                elif key == "active":
+                    filters[key] = bool(value)
+
+
+        if len(filters) != 0:
+            products = Produto.objects.filter(**filters)    
+        else:
+            products = Produto.objects.all()
+            
+        serializer = ProdutoSerializer(
+            products,
+            many = True
+        )
+
+        return Response(serializer.data)
+
 
     def create(self, request, *args, **kwargs):
         data = request.data
@@ -100,6 +183,42 @@ class ProdutoViewSet(viewsets.ModelViewSet):
         serializer = ProdutoSerializer(novo_produto)
 
         return Response(serializer.data)
+    
+    def partial_update(self, request, pk = None):
+        if pk is None: raise ValueError
+        
+        produto = Produto.objects.get(id = pk)
+        ingredients = produto.ingredients.all()
+        
+        request_ingredients = request.data["ingredients"]
+        new_ingredients = []
+        for ingredient in request_ingredients:
+            new_ingredients.append(Ingrediente.objects.get(id = ingredient["id"]))
+
+        if ingredients != new_ingredients:
+            for ingredient in list(ingredients):
+                if ingredient not in new_ingredients:
+                    produto.ingredients.remove(ingredient)
+
+            for ingredient in new_ingredients:
+                produto.ingredients.add(ingredient)
+
+
+        produto_serializer = ProdutoSerializer(
+            instance = produto,
+            data = request.data,
+            partial = True
+        )
+        produto_serializer.is_valid()
+
+        produto_serializer.save()
+
+        return Response(
+            produto_serializer.data
+        )
+            
+
+
 
 
 class ItemPedidoViewSet(viewsets.ModelViewSet):
@@ -116,9 +235,22 @@ class ItemPedidoViewSet(viewsets.ModelViewSet):
 
         return Response(serializer.data)
 
+    def destroy(self, request, pk = None):
+        if pk is None: return Response(status = status.HTTP_404_NOT_FOUND)
+
+        cart = ItemPedido.objects.get(id = pk)
+
+        product = Produto.objects.get(id = cart.product.id)
+        product.quantity += cart.quantity
+        product.save()
+
+        cart.delete()
+
+        return Response(status = status.HTTP_200_OK)
+
+
     def create(self, request, *args, **kwargs):
         item_pedido = request.data
-        print("~ quantity received:", item_pedido["quantity"])
 
         try:
             atual_item_pedido = ItemPedido.objects.get(
@@ -132,6 +264,7 @@ class ItemPedidoViewSet(viewsets.ModelViewSet):
         produto = Produto.objects.get(
             id = item_pedido["product"]
         )
+        produto.quantity -= item_pedido["quantity"]
 
         item_pedido["price"] = produto.price
         item_pedido["active"] = True
@@ -140,25 +273,29 @@ class ItemPedidoViewSet(viewsets.ModelViewSet):
             item_pedido["quantity"] += atual_item_pedido.quantity
 
         serializer = CreateItemPedidoSerializer(data = item_pedido)
-
         serializer.is_valid(raise_exception = True)
+
+        produto.save()
 
         status_code = status.HTTP_200_OK
 
         if atual_item_pedido is not None:
-            serializer.update(
+            cart = serializer.update(
                 atual_item_pedido,
                 serializer.validated_data
             )
         else:
             status_code = status.HTTP_201_CREATED
 
-            serializer.create(
+            cart = serializer.create(
                 serializer.validated_data
             )
 
         return Response(
-            serializer.data,
+            {
+                "id": cart.id,
+                **serializer.data
+            },
             status = status_code
         )
 
@@ -181,9 +318,20 @@ class PedidoViewSet(viewsets.ModelViewSet):
         pedidos = Pedido.objects.all().order_by(
             "-createdAt"
         )
-        pedido_serializer = GetPedidoSerializer(pedidos, many = True)
 
-        return Response(pedido_serializer.data)
+        pagination = CustomPagination()
+        paginated = pagination.paginate_queryset(
+            queryset = pedidos,
+            request = request
+        )
+
+        pedido_serializer = GetPedidoSerializer(paginated, many = True)
+
+        paginated_response = pagination.get_paginated_response(
+            pedido_serializer.data
+        )
+
+        return paginated_response
             
 
     def create(self, request):
@@ -215,55 +363,41 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         tipos = ["cliente", "funcionario"]
 
         filtro_tipo = request.GET.get("tipo", None)
+        filtro_nome = request.GET.get("name", "")
+
         if filtro_tipo != None and filtro_tipo not in tipos:
             return Response(status = status.HTTP_400_BAD_REQUEST)
 
-        if filtro_tipo:
+        if filtro_tipo or filtro_nome:
             usuarios = Usuario.objects.filter(
-                type = filtro_tipo
+                type = filtro_tipo,
+                fullName__icontains = filtro_nome
             )
         else:
             usuarios = Usuario.objects.all()
                 
-        usuario_serializer = UsuarioSerializer(usuarios, many = True)
         
-        pagination = PageNumberPagination()
-        pagination.paginate_queryset(queryset = usuarios, request = request)
+        pagination = CustomPagination()
+        paginated_data = pagination.paginate_queryset(queryset = usuarios, request = request)
+        
+        usuario_serializer = UsuarioSerializer(paginated_data, many = True)
         pagination_response = pagination.get_paginated_response(usuario_serializer.data)
 
         return pagination_response
 
     def partial_update(self, request, pk = 0):
         usuario = Usuario.objects.get(id = pk)
+        django_user = User.objects.get(username = usuario.email)
         
         funcionario_serializer = None
         cliente_serializer = None
-        if usuario.type == "funcionario" and "role" in request.data:
-            funcionario = Funcionario.objects.get(id = pk)
-            funcionario.role = request.data["role"]
 
-            funcionario_serializer = FuncionarioSerializer(
-                instance = funcionario,
-                data = request.data,
-                partial = True
-            )
-            funcionario_serializer.is_valid()
-        elif usuario.type == "cliente" and "phone" in request.data:
-            cliente = Cliente.objects.get(id = pk)
-            cliente.phone = request.data["phone"]
-
-            cliente_serializer = ClienteSerializer(
-                instance = cliente,
-                data = request.data,
-                partial = True
-            )
-            cliente_serializer.is_valid()
+        django_user.is_active = request.data["active"]
 
         email = request.data["email"] if "email" in request.data else None
+        password = request.data["password"] if "password" in request.data else None
         
-        if "password" in request.data:
-            print("senha:", request.data["password"])
-            print("email:", usuario.email)
+        if password is not None:
             django_user = User.objects.get(
                 username = usuario.email
             )
@@ -271,14 +405,35 @@ class UsuarioViewSet(viewsets.ModelViewSet):
             django_user.set_password(request.data["password"])
             
 
-        if email is not None:
-            print("~ pass [email]")
+        if email is not None and email != usuario.email:
             django_user = User.objects.get(
                 username = usuario.email
             )
 
             django_user.email = email
             django_user.username = email
+
+
+        # if usuario.type == "funcionario" and "role" in request.data:
+        #     funcionario = Funcionario.objects.get(id = pk)
+        #     funcionario.role = request.data["role"]
+
+        #     funcionario_serializer = FuncionarioSerializer(
+        #         instance = funcionario,
+        #         data = request.data,
+        #         partial = True
+        #     )
+        #     funcionario_serializer.is_valid()
+        # elif usuario.type == "cliente" and "phone" in request.data:
+        #     cliente = Cliente.objects.get(id = pk)
+        #     cliente.phone = request.data["phone"]
+
+        #     cliente_serializer = ClienteSerializer(
+        #         instance = cliente,
+        #         data = request.data,
+        #         partial = True
+        #     )
+        #     cliente_serializer.is_valid()
 
         serializer = UsuarioSerializer(
             instance = usuario,
@@ -288,7 +443,7 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 
         serializer.is_valid(raise_exception = True)
 
-        django_user.save()
+        if django_user != None: django_user.save()
         serializer.save()
         
         if funcionario_serializer != None: funcionario_serializer.save()
@@ -297,9 +452,6 @@ class UsuarioViewSet(viewsets.ModelViewSet):
         return Response(
             serializer.data
         )
-
-
-        
 
 
 class RegistrarViewSet(viewsets.ModelViewSet):
@@ -378,8 +530,6 @@ class LoginAPI(KnoxLoginView):
     permission_classes = (permissions.AllowAny,)
 
     def post(self, request, format = None):
-        print("~ requestdata:", request.data)
-
         auth_serializer = AuthTokenSerializer(data = request.data)
         auth_serializer.is_valid(raise_exception = True)
 
