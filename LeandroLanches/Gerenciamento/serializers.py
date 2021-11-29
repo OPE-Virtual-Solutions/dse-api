@@ -152,6 +152,7 @@ class PedidoSerializer(serializers.ModelSerializer):
             'createdAt',
             'type',
             'finishedAt',
+            "cancelNote",
             "note",
             'employee',
         )
@@ -192,7 +193,8 @@ class UsuarioSerializer(serializers.ModelSerializer):
             'type',
             "costumer",
             "employee",
-            "firstAccess"
+            "firstAccess",
+            "active"
         )
 
 

@@ -154,6 +154,7 @@ class Usuario(models.Model):
     password = models.CharField(db_column="senha", max_length=255, blank=True, null=True)
     type = models.CharField(db_column="tipo", max_length=255)
     firstAccess = models.BooleanField(db_column="primero_acesso", default = True)
+    active = models.BooleanField(db_column="ativo", default = True)
 
     class Meta:
         db_table = 'TB_USUARIO'
