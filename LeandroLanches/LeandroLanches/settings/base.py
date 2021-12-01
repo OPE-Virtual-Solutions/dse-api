@@ -3,10 +3,10 @@ import environ
 
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parente
 
-env = environ.Env()
-environ.Env.read_env(os.path.join(os.path.dirname( BASE_DIR ) , '.env'))
+#env = environ.Env()
+#environ.Env.read_env(os.path.join(os.path.dirname( BASE_DIR ) , '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -44,6 +44,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,11 +84,11 @@ WSGI_APPLICATION = 'LeandroLanches.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "mssql",
-        "NAME": env("DATABASE_NAME"),
-        "USER": env("DATABASE_USER"),
-        "PASSWORD": env("DATABASE_PASSWORD"),
-        "HOST": env("DATABASE_HOST"),
-        "PORT": env("DATABASE_PORT"),
+        "NAME": "LeandroLanches",
+        "USER": "sqlserver",
+        "PASSWORD": "@Agua123",
+        "HOST": "34.122.248.197",
+        "PORT": "1433",
         "OPTIONS": {"driver": "ODBC Driver 17 for SQL Server", 
         },
     },
@@ -131,7 +132,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = 'media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Default primary key field type
